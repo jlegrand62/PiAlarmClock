@@ -1,0 +1,38 @@
+ScreenHandler:
+    ClockScreen:
+    SettingsScreen
+
+<ClockScreen>
+    name: "clock"
+
+    FloatLayout:
+        Button:
+            size_hint: 0.2, 0.12
+            text: "Settings"
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.current = "settings"
+            pos_hint: {"right":1, "top":1}
+
+        Button:
+            size_hint: 0.2, 0.12
+            text: "Exit"
+            on_release: app.stop()
+            pos_hint: {"left":1, "top":1}
+
+
+<SettingsScreen>
+    name: "settings"
+    
+    FloatLayout:
+        Button:
+            size_hint: 0.2, 0.12
+            text: "Back"
+            on_release:
+                root.manager.transition.direction = 'right'
+                root.manager.current = "clock"
+            pos_hint: {"left":1, "top":1}
+
+
+           
+		
