@@ -1,9 +1,17 @@
+#: kivy 1.9
+#: import ScreenManager kivy.uix.screenmanager.ScreenManager
+#: import Screen kivy.uix.screenmanager.ScreenManager
+
 ScreenHandler:
     ClockScreen:
-    SettingsScreen
+    SettingsScreen:
+    
+<ClockLabel>:
+    font_size: 80
 
-<ClockScreen>
+<ClockScreen>:
     name: "clock"
+    
 
     FloatLayout:
         Button:
@@ -20,8 +28,11 @@ ScreenHandler:
             on_release: app.stop()
             pos_hint: {"left":1, "top":1}
 
+        ClockLabel:
+            size_hint: 0.3, 0.19
+            pos: root.width*0.35,root.height*0.4
 
-<SettingsScreen>
+<SettingsScreen>:
     name: "settings"
     
     FloatLayout:
@@ -32,6 +43,12 @@ ScreenHandler:
                 root.manager.transition.direction = 'right'
                 root.manager.current = "clock"
             pos_hint: {"left":1, "top":1}
+
+        Label:
+            font_size:100
+            size_hint: 0.4, 0.4
+            pos: root.width*0.35,root.height*0.4
+            text: "Settings Options Go Here"
 
 
            
