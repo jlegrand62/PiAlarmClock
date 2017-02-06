@@ -9,6 +9,9 @@ ScreenHandler:
 <ClockLabel>:
     font_size: 50
 
+<SleepButton>:
+    font_size: 35
+
 <ClockScreen>:
     name: "clock"
     
@@ -31,6 +34,10 @@ ScreenHandler:
         ClockLabel:
             size_hint: 0.3, 0.19
             pos: root.width*0.35,root.height*0.4
+
+        SleepButton:
+            size_hint: 0.2, 0.12
+            pos: root.width * 0.4, root.height*0.3
 
 <SettingsScreen>:
     name: "settings"
