@@ -1,4 +1,5 @@
 import kivy
+import os
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
@@ -11,6 +12,7 @@ from kivy.uix.behaviors import ButtonBehavior
 import time
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+
 
 kivy.require("1.9.1")
 
@@ -30,9 +32,11 @@ class SleepButton(Button):
 
     def on_press(self):
         if self.text == "Good Night":
+            os.system("echo 55 > /sys/class/backlight/rpi_backlight/brightness")
             self.text = "Good Morning"
         else:
             self.text = "Good Night"
+            os.system("echo 255 > /sys/class/backlight/rpi_backlight/brightness")
 
 class ClockScreen(Screen):
     pass
