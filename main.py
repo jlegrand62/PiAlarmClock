@@ -17,6 +17,21 @@ from kivy.uix.checkbox import CheckBox
 
 kivy.require("1.9.1")
 
+class WeatherStatusLabel(Label):
+    def __init__(self, **kwargs):
+        super(WeatherStatusLabel, self).__init__(**kwargs)
+        self.text = "Disabled"
+
+class SmartSleepStatusLabel(Label):
+    def __init__(self, **kwargs):
+        super(SmartSleepStatusLabel, self).__init__(**kwargs)
+        self.text = "Disabled"
+
+class NewsStatusLabel(Label):
+    def __init__(self, **kwargs):
+        super(NewsStatusLabel, self).__init__(**kwargs)
+        self.text = "Disabled"
+
 class ClockLabel(Label):
     def __init__(self, **kwargs):
         super(ClockLabel, self).__init__(**kwargs)

@@ -42,31 +42,41 @@ ScreenHandler:
 
         ClockLabel:
             size_hint: 0.3, 0.19
-            pos: root.width*0.35,root.height*0.4
+            pos: root.width*0.35,root.height*0.5
 
         SleepButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*0.26
+            pos: root.width * 0.38, root.height*0.33
 
         Label:
-            font_size: 20
-            text: "Weather"
+            font_size: 22
+            text: "Weather:"
             size_hint: 0.1, 0.1
             pos: root.width * 0.23, root.height * 0.16
 
         Label:
-            font_size: 20
-            text: "SmartSleep"
+            font_size: 22
+            text: "SmartSleep:"
             size_hint: 0.1, 0.1
             pos: root.width * 0.43, root.height * 0.16
 
         Label:
-            font_size: 20
-            text: "News"
+            font_size: 22
+            text: "News:"
             size_hint: 0.1, 0.1
             pos: root.width * 0.63, root.height * 0.16
 
-        
+        WeatherStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.23, root.height * 0.06
+
+        SmartSleepStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.43, root.height * 0.06
+
+        NewsStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.63, root.height * 0.06
 
 <WeatherCheckBox>
     
