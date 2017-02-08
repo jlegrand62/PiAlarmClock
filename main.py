@@ -12,6 +12,7 @@ from kivy.uix.behaviors import ButtonBehavior
 import time
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.checkbox import CheckBox
 
 
 kivy.require("1.9.1")
@@ -41,6 +42,18 @@ class SleepButton(Button):
 class ClockScreen(Screen):
     pass
 
+class WeatherCheckBox(CheckBox):
+    def __init__(self, **kwargs):
+        super(WeatherCheckBox, self).__init__(**kwargs)
+
+class SmartSleepCheckBox(CheckBox):
+    def __init__(self, **kwargs):
+        super(SmartSleepCheckBox, self).__init__(**kwargs)
+
+class NewsCheckBox(CheckBox):
+    def __init__(self, **kwargs):
+        super(NewsCheckBox, self).__init__(**kwargs)
+        
 class SettingsScreen(Screen):
     pass
 

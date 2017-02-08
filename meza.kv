@@ -12,6 +12,15 @@ ScreenHandler:
 <SleepButton>:
     font_size: 25
 
+<WeatherStatusLabel>:
+    font_size: 20
+
+<SmartSleepStatusLabel>:
+    font_size: 20
+
+<NewsStatusLabel>:
+    font_size: 20
+
 <ClockScreen>:
     name: "clock"
     
@@ -39,6 +48,14 @@ ScreenHandler:
             size_hint: 0.22, 0.17
             pos: root.width * 0.38, root.height*0.25
 
+        
+
+<WeatherCheckBox>
+    
+<SmartSleepCheckBox>
+
+<NewsCheckBox>
+
 <SettingsScreen>:
     name: "settings"
     
@@ -52,10 +69,36 @@ ScreenHandler:
             pos_hint: {"left":1, "top":1}
 
         Label:
-            font_size:60
-            size_hint: 0.4, 0.4
-            pos: root.width*0.35,root.height*0.4
-            text: "Settings Options Go Here"
+            font_size: 20
+            size_hint: 0.1, 0.1
+            text: "Weather"
+            pos: root.width * 0.2, root.height * 0.3
+
+        Label:
+            font_size: 20
+            size_hint: 0.1, 0.1
+            text: "SmartSleep"
+            pos: root.width * 0.4, root.height * 0.3
+
+        Label:
+            font_size: 20
+            size_hint: 0.1, 0.1
+            text: "News"
+            pos: root.width * 0.6, root.height * 0.3
+
+        WeatherCheckBox:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.2, root.height * 0.2
+
+        SmartSleepCheckBox:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.4, root.height * 0.2
+
+        NewsCheckBox:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.6, root.height * 0.2
+
+        
 
 
            
