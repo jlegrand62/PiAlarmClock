@@ -9,6 +9,9 @@ ScreenHandler:
 <ClockLabel>:
     font_size: 50
 
+<SetAlarmButton>:
+    font_size: 25
+
 <SleepButton>:
     font_size: 25
 
@@ -39,6 +42,10 @@ ScreenHandler:
             text: "Exit"
             on_release: app.stop()
             pos_hint: {"left":1, "top":1}
+
+        SetAlarmButton:
+            size_hint: 0.22, 0.17
+            pos: root.width * 0.38, root.height*.65
 
         ClockLabel:
             size_hint: 0.3, 0.19

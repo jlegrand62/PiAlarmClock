@@ -35,6 +35,14 @@ class NewsStatusLabel(Label):
         super(NewsStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
 
+class SetAlarmButton(Button):
+    def __init__(self, **kwargs):
+        super(SetAlarmButton, self).__init__(**kwargs)
+        self.text = "Press To Set Alarm"
+
+    def on_press(self):
+        print("popup goes here")
+
 class ClockLabel(Label):
     def __init__(self, **kwargs):
         super(ClockLabel, self).__init__(**kwargs)
