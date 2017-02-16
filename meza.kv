@@ -48,36 +48,6 @@ ScreenHandler:
             size_hint: 0.22, 0.17
             pos: root.width * 0.38, root.height*0.33
 
-        Label:
-            font_size: 22
-            text: "Weather:"
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.23, root.height * 0.16
-
-        Label:
-            font_size: 22
-            text: "SmartSleep:"
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.43, root.height * 0.16
-
-        Label:
-            font_size: 22
-            text: "News:"
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.63, root.height * 0.16
-
-        WeatherStatusLabel:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.23, root.height * 0.06
-
-        SmartSleepStatusLabel:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.43, root.height * 0.06
-
-        NewsStatusLabel:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.63, root.height * 0.06
-
 <WeatherCheckBox>
     
 <SmartSleepCheckBox>
@@ -117,14 +87,30 @@ ScreenHandler:
         WeatherCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.2, root.height * 0.2
+            on_press: self.updateWeather()
 
         SmartSleepCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.4, root.height * 0.2
+            on_press: self.updateSmartSleep()
 
         NewsCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.6, root.height * 0.2
+            on_press: self.updateNews()
+
+        WeatherStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.2, root.height * 0.06
+            id: wl
+
+        SmartSleepStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.4, root.height * 0.06
+
+        NewsStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.6, root.height * 0.06
 
         
 

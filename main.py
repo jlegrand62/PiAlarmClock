@@ -16,6 +16,9 @@ from kivy.uix.checkbox import CheckBox
 
 
 kivy.require("1.9.1")
+smart_sleep = 0
+weather_stat = 0
+news_stat = 0
 
 class WeatherStatusLabel(Label):
     def __init__(self, **kwargs):
@@ -61,13 +64,34 @@ class WeatherCheckBox(CheckBox):
     def __init__(self, **kwargs):
         super(WeatherCheckBox, self).__init__(**kwargs)
 
+    def updateWeather(self):
+        global weather_stat
+        if(weather_stat == 0):
+            weather_stat = 1
+        else:
+            weather_stat = 0
+
 class SmartSleepCheckBox(CheckBox):
     def __init__(self, **kwargs):
         super(SmartSleepCheckBox, self).__init__(**kwargs)
 
+    def updateSmartSleep(self):
+        global smart_sleep
+        if(smart_sleep == 0):
+            smart_sleep = 1
+        else:
+            smart_sleep = 0
+
 class NewsCheckBox(CheckBox):
     def __init__(self, **kwargs):
         super(NewsCheckBox, self).__init__(**kwargs)
+
+    def updateNews(self):
+        global news_stat
+        if(news_stat == 0):
+            news_stat = 1
+        else:
+            news_stat = 0    
         
 class SettingsScreen(Screen):
     pass
@@ -81,6 +105,9 @@ class MezaApp(App):
         app = Builder.load_file("meza.kv")
         crudeclock = ClockLabel()
         sleeper = SleepButton()
+        weatherStat = WeatherStatusLabel()
+        weatherBox = WeatherCheckBox()
+        
         return app
 
 if __name__ == '__main__':
