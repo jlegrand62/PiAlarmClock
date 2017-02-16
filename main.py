@@ -11,6 +11,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors import ButtonBehavior
 import time
 from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 
@@ -40,8 +42,14 @@ class SetAlarmButton(Button):
         super(SetAlarmButton, self).__init__(**kwargs)
         self.text = "Press To Set Alarm"
 
-    def on_press(self):
-        print("popup goes here")
+    def alarmPopup(self):
+        float = FloatLayout()
+        alarmPopup = Popup(title='Test',
+                    content=Label(text='Hello World'),
+                    size_hint=(None, None),
+                    size=(400,400))
+        alarmPopup.open()
+        
 
 class ClockLabel(Label):
     def __init__(self, **kwargs):
