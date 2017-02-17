@@ -13,8 +13,10 @@ import time
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.dropdown import DropDown
 
 
 kivy.require("1.9.1")
@@ -43,11 +45,37 @@ class SetAlarmButton(Button):
         self.text = "Press To Set Alarm"
 
     def alarmPopup(self):
-        float = FloatLayout()
-        alarmPopup = Popup(title='Test',
-                    content=Label(text='Hello World'),
-                    size_hint=(None, None),
-                    size=(400,400))
+        box = FloatLayout()
+        
+        hourbutton = Button(text='Select Hour', size_hint=(.2,.2),
+                            pos_hint={'x':.2, 'y':.5})
+        hourdropdown = DropDown()
+        for i in range(24):
+            btn=Button(text = '%r' % i, size_hint_y=None, height =30)
+            btn.bind(on_release=lambda btn: hourdropdown.select(btn.text))
+            hourdropdown.add_widget(btn)
+
+        hourbutton.bind(on_release=hourdropdown.open)
+        hourdropdown.bind(on_select=lambda instance, x: setattr(hourbutton, 'text', x))
+        box.add_widget(hourbutton)
+        box.add_widget(hourdropdown)
+
+        minutebutton = Button(text='Select Minute', size_hint=(.2,.2),
+                            pos_hint={'x':.6, 'y':.5})
+        minutedropdown = DropDown()
+        for i in range(60):
+            btn=Button(text = '%r' % i, size_hint_y=None, height =30)
+            btn.bind(on_release=lambda btn: minutedropdown.select(btn.text))
+            minutedropdown.add_widget(btn)
+
+        minutebutton.bind(on_release=minutedropdown.open)
+        minutedropdown.bind(on_select=lambda instance, x: setattr(minutebutton, 'text', x))
+        box.add_widget(minutebutton)
+        box.add_widget(minutedropdown)
+        
+        alarmPopup = Popup(title='Set Your Alarm:',
+                    content=box,
+                    size_hint=(.9, .9))
         alarmPopup.open()
         
 
