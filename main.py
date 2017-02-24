@@ -10,6 +10,8 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors import ButtonBehavior
 import time
+from time import gmtime, strftime
+import datetime
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
@@ -26,6 +28,7 @@ weather_stat = 0
 news_stat = 0
 alarm_hour = 0
 alarm_minute = 0
+wait_next_minute = 0
 
 class WeatherStatusLabel(Label):
     def __init__(self, **kwargs):
@@ -100,8 +103,6 @@ class SetAlarmButton(Button):
             self.text = "Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
 
         else:
-            global alarm_hour
-            global alarm_minute
             if(alarm_hour < 10 and alarm_minute < 10):
                 self.text = "Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
             elif(alarm_minute < 10):
@@ -133,10 +134,32 @@ class ClockLabel(Label):
         super(ClockLabel, self).__init__(**kwargs)
         self.text = str(time.asctime())
         Clock.schedule_interval(self.update, 1)
+        Clock.schedule_interval(self.checkAlarm, 1)
 
     def update(self, *args):
         self.text = str(time.asctime())
 
+    def checkAlarm(self, *args):
+        global alarm_hour
+        global alarm_minute
+        now = datetime.datetime.now()
+        local_hour = int(now.hour)
+        local_minute = int(now.minute)
+        global wait_next_minute 
+
+        if(wait_next_minute!=0 and local_minute!=alarm_minute):
+            wait_next_minute = 0
+        elif(local_minute == alarm_minute and wait_next_minute == 0):
+            self.alarm_func()
+            wait_next_minute = 1
+
+    def alarm_func(self, *args):
+        global smart_sleep
+        global weather_stat
+        global news_stat
+
+        
+            
 class SleepButton(Button):
     def __init__(self, **kwargs):
         super(SleepButton, self).__init__(**kwargs)
