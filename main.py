@@ -46,6 +46,7 @@ class SetAlarmButton(Button):
     def __init__(self, **kwargs):
         super(SetAlarmButton, self).__init__(**kwargs)
         self.text = "Press To Set Alarm"
+        Clock.schedule_interval(self.update, 1)
 
     def alarmPopup(self):
         box = FloatLayout()
@@ -92,6 +93,24 @@ class SetAlarmButton(Button):
         dismissButton.bind(on_press=partial(dismissButton.dismissPopup, alarmPopup, hourbutton, minutebutton))
         alarmPopup.open()
 
+    def update(self, *args):
+        global alarm_hour
+        global alarm_minute
+        if(alarm_hour == 0 and alarm_minute == 0):
+            self.text = "Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
+
+        else:
+            global alarm_hour
+            global alarm_minute
+            if(alarm_hour < 10 and alarm_minute < 10):
+                self.text = "Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
+            elif(alarm_minute < 10):
+                self.text = "Set Alarm\n Alarm is Currently {}:0{}".format(alarm_hour, alarm_minute)
+            elif(alarm_hour < 10):
+                self.text = "Set Alarm\n Alarm is Currently 0{}:{}".format(alarm_hour, alarm_minute)
+            else:
+                self.text = "Set Alarm\n Alarm is Currently {}:{}".format(alarm_hour, alarm_minute)
+
 class PopupDismissButton(Button):
     def __init__(self, **kwargs):
         super(PopupDismissButton, self).__init__(**kwargs)
@@ -102,10 +121,11 @@ class PopupDismissButton(Button):
     def dismissPopup(self, instance, button1, button2, button3):
         global alarm_hour
         global alarm_minute
-
-        alarm_hour = button1.text
-        alarm_minute = button2.text
-
+        global alarm_changed
+        
+        alarm_hour = int(button1.text)
+        alarm_minute = int(button2.text)
+        
         instance.dismiss()
 
 class ClockLabel(Label):
@@ -177,6 +197,7 @@ class MezaApp(App):
     def build(self):
         app = Builder.load_file("meza.kv")
         crudeclock = ClockLabel()
+        alarmButton = SetAlarmButton()
         sleeper = SleepButton()
         weatherStat = WeatherStatusLabel()
         weatherBox = WeatherCheckBox()
