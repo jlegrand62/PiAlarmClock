@@ -28,35 +28,65 @@ weather_stat = 0
 news_stat = 0
 alarm_hour = 0
 alarm_minute = 0
+alarm_changed = 0
 wait_next_minute = 0
 
+#status labels for Settings page which update based on state of their corresponding checkbox
 class WeatherStatusLabel(Label):
     def __init__(self, **kwargs):
         super(WeatherStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
+        Clock.schedule_interval(self.update, 1)
+
+    def update(self, *args):
+        global weather_stat
+        if(weather_stat == 0):
+            self.text = "Disabled"
+        else:
+            self.text = "Enabled"
 
 class SmartSleepStatusLabel(Label):
     def __init__(self, **kwargs):
         super(SmartSleepStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
+        Clock.schedule_interval(self.update, 1)
+
+    def update(self, *args):
+        global smart_sleep
+        if(smart_sleep == 0):
+            self.text = "Disabled"
+        else:
+            self.text = "Enabled"
 
 class NewsStatusLabel(Label):
     def __init__(self, **kwargs):
         super(NewsStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
+        Clock.schedule_interval(self.update, 1)
 
+    def update(self, *args):
+        global news_stat
+        if(news_stat == 0):
+            self.text = "Disabled"
+        else:
+            self.text = "Enabled"
+
+#alarm picker button class and methods
 class SetAlarmButton(Button):
     def __init__(self, **kwargs):
         super(SetAlarmButton, self).__init__(**kwargs)
         self.text = "Press To Set Alarm"
+        #schedule this button to continually look to update it's text to reflect the current alarm
         Clock.schedule_interval(self.update, 1)
 
     def alarmPopup(self):
+        #content of the popup to be sotred in this float layout
         box = FloatLayout()
 
         #hour selector
         hourbutton = Button(text='Select Hour', size_hint=(.2,.2),
                             pos_hint={'x':.2, 'y':.5})
+        #dropdown menu which drops down from the hourbutton
         hourdropdown = DropDown()
         for i in range(24):
             if(i<10):
@@ -68,12 +98,14 @@ class SetAlarmButton(Button):
 
         hourbutton.bind(on_release=hourdropdown.open)
         hourdropdown.bind(on_select=lambda instance, x: setattr(hourbutton, 'text', x))
+        #add widgets to the popup's float layout
         box.add_widget(hourbutton)
         box.add_widget(hourdropdown)
 
         #minute selector
         minutebutton = Button(text='Select Minute', size_hint=(.2,.2),
                             pos_hint={'x':.6, 'y':.5})
+        #dopdown menu which drops down from the minutebutton
         minutedropdown = DropDown()
         for i in range(60):
             if(i<10):
@@ -85,9 +117,11 @@ class SetAlarmButton(Button):
         
         minutebutton.bind(on_release=minutedropdown.open)
         minutedropdown.bind(on_select=lambda instance, x: setattr(minutebutton, 'text', x))
+        #add widgets to the popup's float layout
         box.add_widget(minutebutton)
         box.add_widget(minutedropdown)
 
+        #button to dismiss alarm selector and set alarm once user has chosen alarm
         dismissButton = PopupDismissButton()
         box.add_widget(dismissButton)
         
@@ -112,6 +146,7 @@ class SetAlarmButton(Button):
             else:
                 self.text = "Set Alarm\n Alarm is Currently {}:{}".format(alarm_hour, alarm_minute)
 
+#special button added to the popup to ensure user selects and alarm and then saves it 
 class PopupDismissButton(Button):
     def __init__(self, **kwargs):
         super(PopupDismissButton, self).__init__(**kwargs)
@@ -122,23 +157,25 @@ class PopupDismissButton(Button):
     def dismissPopup(self, instance, button1, button2, button3):
         global alarm_hour
         global alarm_minute
-        global alarm_changed
-        
-        alarm_hour = int(button1.text)
-        alarm_minute = int(button2.text)
-        
-        instance.dismiss()
 
+        if(button1.text != "Select Hour" and button2.text != "Select Minute"):
+            alarm_hour = int(button1.text)
+            alarm_minute = int(button2.text)
+            instance.dismiss()
+#self-updating clock label used on the home screen to tell time and check the user-set alarms
 class ClockLabel(Label):
     def __init__(self, **kwargs):
         super(ClockLabel, self).__init__(**kwargs)
         self.text = str(time.asctime())
+        #schedule text update and alarm checking functions
         Clock.schedule_interval(self.update, 1)
         Clock.schedule_interval(self.checkAlarm, 1)
-
+    
+    #updates the label's text to properly reflect the current time
     def update(self, *args):
         self.text = str(time.asctime())
-
+    
+    #checks the alarm set by the user and calls the alarm function if the alarm occurs
     def checkAlarm(self, *args):
         global alarm_hour
         global alarm_minute
@@ -147,6 +184,7 @@ class ClockLabel(Label):
         local_minute = int(now.minute)
         global wait_next_minute 
 
+        #logic to ensure alarm function only fires once when it is the alarm time
         if(wait_next_minute!=0 and local_minute!=alarm_minute):
             wait_next_minute = 0
         elif(local_minute == alarm_minute and wait_next_minute == 0):
@@ -159,7 +197,7 @@ class ClockLabel(Label):
         global news_stat
 
         
-            
+#class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
 class SleepButton(Button):
     def __init__(self, **kwargs):
         super(SleepButton, self).__init__(**kwargs)
@@ -172,10 +210,12 @@ class SleepButton(Button):
         else:
             self.text = "Good Night"
             os.system("echo 255 > /sys/class/backlight/rpi_backlight/brightness")
-
+            
+#main screen of the app for use with screenmanager
 class ClockScreen(Screen):
     pass
 
+#checkboxes on the settings screen to allow the user to set which features they want
 class WeatherCheckBox(CheckBox):
     def __init__(self, **kwargs):
         super(WeatherCheckBox, self).__init__(**kwargs)
@@ -208,13 +248,16 @@ class NewsCheckBox(CheckBox):
             news_stat = 1
         else:
             news_stat = 0    
-        
+
+#settings screen for use with screenmanager
 class SettingsScreen(Screen):
     pass
 
+#screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
     pass
 
+#main loop which runs the app and populates the UI
 class MezaApp(App):
 
     def build(self):
