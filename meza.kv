@@ -56,6 +56,8 @@ ScreenHandler:
             size_hint: 0.22, 0.17
             pos: root.width * 0.38, root.height*0.33
 
+<SpecialFloatLayout>
+
 <WeatherCheckBox>
     
 <SmartSleepCheckBox>
@@ -65,7 +67,7 @@ ScreenHandler:
 <SettingsScreen>:
     name: "settings"
     
-    FloatLayout:
+    SpecialFloatLayout:
         Button:
             size_hint: 0.2, 0.12
             text: "Back"
@@ -95,16 +97,21 @@ ScreenHandler:
         WeatherCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.2, root.height * 0.2
+            id: weather_stat1
+            active: self.weather_stat1
             on_press: self.updateWeather()
 
         SmartSleepCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.4, root.height * 0.2
+            id: smart_sleep1
+            active: self.smart_sleep1
             on_press: self.updateSmartSleep()
 
         NewsCheckBox:
             size_hint: 0.1, 0.1
             pos: root.width * 0.6, root.height * 0.2
+            id: news_stat1
             on_press: self.updateNews()
 
         WeatherStatusLabel:

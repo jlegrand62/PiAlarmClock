@@ -19,10 +19,12 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.dropdown import DropDown
+from kivy.storage.jsonstore import JsonStore
 from functools import partial
 
 
 kivy.require("1.9.1")
+store = JsonStore('settings.json')
 smart_sleep = 0
 weather_stat = 0
 news_stat = 0
@@ -36,7 +38,7 @@ class WeatherStatusLabel(Label):
     def __init__(self, **kwargs):
         super(WeatherStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
-        Clock.schedule_interval(self.update, 1)
+        Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global weather_stat
@@ -49,7 +51,7 @@ class SmartSleepStatusLabel(Label):
     def __init__(self, **kwargs):
         super(SmartSleepStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
-        Clock.schedule_interval(self.update, 1)
+        Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global smart_sleep
@@ -62,7 +64,7 @@ class NewsStatusLabel(Label):
     def __init__(self, **kwargs):
         super(NewsStatusLabel, self).__init__(**kwargs)
         self.text = "Disabled"
-        Clock.schedule_interval(self.update, 1)
+        Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global news_stat
@@ -133,9 +135,11 @@ class SetAlarmButton(Button):
     def update(self, *args):
         global alarm_hour
         global alarm_minute
+        #default state of alarm button before any alarms are set
         if(alarm_hour == 0 and alarm_minute == 0):
             self.text = "Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
 
+        #text formatting to properly display the current alarm
         else:
             if(alarm_hour < 10 and alarm_minute < 10):
                 self.text = "Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
@@ -162,6 +166,7 @@ class PopupDismissButton(Button):
             alarm_hour = int(button1.text)
             alarm_minute = int(button2.text)
             instance.dismiss()
+            
 #self-updating clock label used on the home screen to tell time and check the user-set alarms
 class ClockLabel(Label):
     def __init__(self, **kwargs):
@@ -190,7 +195,7 @@ class ClockLabel(Label):
         elif(local_minute == alarm_minute and wait_next_minute == 0):
             self.alarm_func()
             wait_next_minute = 1
-
+    #function called when the alarm fires, will execute different commands based on user settings
     def alarm_func(self, *args):
         global smart_sleep
         global weather_stat
@@ -215,43 +220,145 @@ class SleepButton(Button):
 class ClockScreen(Screen):
     pass
 
+class SpecialFloatLayout(FloatLayout):
+    pass
+
 #checkboxes on the settings screen to allow the user to set which features they want
 class WeatherCheckBox(CheckBox):
+    #updates from json storage
+    if store.exists('weather_stat'):
+        global weather_stat
+        weather_stat = store.get('weather_stat')['status']
+
+    weather_stat1 = ObjectProperty(False)
+
+    if(weather_stat == 1):
+            weather_stat1 = ObjectProperty(True)
+            
     def __init__(self, **kwargs):
         super(WeatherCheckBox, self).__init__(**kwargs)
+        Clock.schedule_interval(self.update, 0.5)
+
+    def update(self, *args):
+        global weather_stat
+
+        if(weather_stat == 1):
+            weather_stat1 = ObjectProperty(True)
+        else:
+            weather_stat1 = ObjectProperty(False)
 
     def updateWeather(self):
         global weather_stat
         if(weather_stat == 0):
+            store.put('weather_stat', status=1)
             weather_stat = 1
         else:
+            store.put('weather_stat', status=0)
             weather_stat = 0
 
 class SmartSleepCheckBox(CheckBox):
+    #updates from json storage
+    if store.exists('smart_sleep'):
+        global smart_sleep
+        smart_sleep = store.get('smart_sleep')['status']
+
+    smart_sleep1= ObjectProperty(False)
+
+    if(smart_sleep == 1):
+        smart_sleep1 = ObjectProperty(True)
+            
     def __init__(self, **kwargs):
         super(SmartSleepCheckBox, self).__init__(**kwargs)
+        Clock.schedule_interval(self.update, 0.5)
+
+    def update(self, *args):
+        global smart_sleep
+
+        if(smart_sleep == 1):
+            smart_sleep1 = ObjectProperty(True)
+        else:
+            smart_sleep1 = ObjectProperty(False)
 
     def updateSmartSleep(self):
         global smart_sleep
         if(smart_sleep == 0):
+            store.put('smart_sleep', status=1)
             smart_sleep = 1
         else:
+            store.put('smart_sleep', status=0)
             smart_sleep = 0
 
 class NewsCheckBox(CheckBox):
+    #updates from json storage
+    if store.exists('news_stat'):
+        global news_stat
+        news_stat = store.get('news_stat')['status']
+    
+    active = False
+
+    if(news_stat == 1):
+        active = True
+    
     def __init__(self, **kwargs):
         super(NewsCheckBox, self).__init__(**kwargs)
+        #updates from json storage
+        if store.exists('news_stat'):
+                global news_stat
+                news_stat = store.get('news_stat')['status']
+        
+        if(news_stat == 1):
+            active = True
+        else:
+            active = False
+            
+        Clock.schedule_interval(self.update, 0.5)
+
+    def update(self, *args):
+        global news_stat
+
+        if(news_stat == 1):
+            active = True
+        else:
+            active = False
 
     def updateNews(self):
         global news_stat
         if(news_stat == 0):
+            store.put('news_stat', status=1)
             news_stat = 1
+            news_stat1 = ObjectProperty(True)
         else:
-            news_stat = 0    
+            store.put('news_stat', status=0)
+            news_stat = 0
+            news_stat1 = ObjectProperty(False)
 
 #settings screen for use with screenmanager
 class SettingsScreen(Screen):
-    pass
+    #this allows for persistent storage to update the states of the checkboxes in the settings
+        if store.exists('weather_stat'):
+            global weather_stat
+            weather_stat = store.get('weather_stat')['status']
+
+        if store.exists('news_stat'):
+            global news_stat
+            news_stat = store.get('news_stat')['status']
+
+        if store.exists('smart_sleep'):
+            global smart_sleep
+            smart_sleep = store.get('smart_sleep')['status']
+            
+        weather_stat1 = ObjectProperty(False)
+        news_stat1 = ObjectProperty(False)
+        smart_sleep1= ObjectProperty(False)
+
+        if(weather_stat == 1):
+            weather_stat1 = ObjectProperty(True)
+
+        if(news_stat == 1):
+            news_stat1 = ObjectProperty(True)
+
+        if(smart_sleep == 1):
+            smart_sleep1 = ObjectProperty(True)  
 
 #screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
@@ -261,6 +368,18 @@ class ScreenHandler(ScreenManager):
 class MezaApp(App):
 
     def build(self):
+        if store.exists('weather_stat'):
+            global weather_stat
+            weather_stat = store.get('weather_stat')['status']
+
+        if store.exists('news_stat'):
+            global news_stat
+            news_stat = store.get('news_stat')['status']
+
+        if store.exists('smart_sleep'):
+            global smart_sleep
+            smart_sleep = store.get('smart_sleep')['status']
+            
         app = Builder.load_file("meza.kv")
         crudeclock = ClockLabel()
         alarmButton = SetAlarmButton()
