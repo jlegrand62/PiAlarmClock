@@ -135,6 +135,12 @@ class SetAlarmButton(Button):
     def update(self, *args):
         global alarm_hour
         global alarm_minute
+        currentDay = time.strftime("%A")
+        
+        if store.exists(currentDay):
+            alarm_hour = store.get(currentDay)['alarm_hour']
+            alarm_minute = store.get(currentDay)['alarm_minute']
+
         #default state of alarm button before any alarms are set
         if(alarm_hour == 0 and alarm_minute == 0):
             self.text = "Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
@@ -165,6 +171,9 @@ class PopupDismissButton(Button):
         if(button1.text != "Select Hour" and button2.text != "Select Minute"):
             alarm_hour = int(button1.text)
             alarm_minute = int(button2.text)
+            currentDay = time.strftime("%A")
+            store.put(currentDay, alarm_hour = alarm_hour, alarm_minute = alarm_minute)
+            
             instance.dismiss()
             
 #self-updating clock label used on the home screen to tell time and check the user-set alarms
@@ -200,6 +209,9 @@ class ClockLabel(Label):
         global smart_sleep
         global weather_stat
         global news_stat
+
+        os.system("pico2wave -w alarm.wav \"Beep Beep Beep!\" && aplay alarm.wav")
+        
 
         
 #class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
