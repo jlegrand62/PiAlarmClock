@@ -37,41 +37,44 @@ wait_next_minute = 0
 class WeatherStatusLabel(Label):
     def __init__(self, **kwargs):
         super(WeatherStatusLabel, self).__init__(**kwargs)
-        self.text = "Disabled"
+        self.text = "[color=f44253]Disabled[/color]"
+        self.markup=True
         Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global weather_stat
         if(weather_stat == 0):
-            self.text = "Disabled"
+            self.text = "[color=f44253]Disabled[/color]"
         else:
-            self.text = "Enabled"
+            self.text = "[color=42f445]Enabled[/color]"
 
 class SmartSleepStatusLabel(Label):
     def __init__(self, **kwargs):
         super(SmartSleepStatusLabel, self).__init__(**kwargs)
-        self.text = "Disabled"
+        self.text = "[color=f44253]Disabled[/color]"
+        self.markup=True
         Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global smart_sleep
         if(smart_sleep == 0):
-            self.text = "Disabled"
+            self.text = "[color=f44253]Disabled[/color]"
         else:
-            self.text = "Enabled"
+            self.text = "[color=42f445]Enabled[/color]"
 
 class NewsStatusLabel(Label):
     def __init__(self, **kwargs):
         super(NewsStatusLabel, self).__init__(**kwargs)
-        self.text = "Disabled"
+        self.text = "[color=f44253]Disabled[/color]"
+        self.markup=True
         Clock.schedule_interval(self.update, 0.5)
 
     def update(self, *args):
         global news_stat
         if(news_stat == 0):
-            self.text = "Disabled"
+            self.text = "[color=f44253]Disabled[/color]"
         else:
-            self.text = "Enabled"
+            self.text = "[color=42f445]Enabled[/color]"
 
 #alarm picker button class and methods
 class SetAlarmButton(Button):
@@ -92,9 +95,9 @@ class SetAlarmButton(Button):
         hourdropdown = DropDown()
         for i in range(24):
             if(i<10):
-                btn=Button(text = '0%r' % i, size_hint_y=None, height =30)
+                btn=Button(text = '0%r' % i, size_hint_y=None, height =50)
             else:
-                btn=Button(text = '%r' % i, size_hint_y=None, height =30)
+                btn=Button(text = '%r' % i, size_hint_y=None, height =50)
             btn.bind(on_release=lambda btn: hourdropdown.select(btn.text))
             hourdropdown.add_widget(btn)
 
@@ -127,8 +130,8 @@ class SetAlarmButton(Button):
         dismissButton = PopupDismissButton()
         box.add_widget(dismissButton)
         
-        
-        alarmPopup = Popup(title='Set Your Alarm:', content=box, size_hint=(.9, .9))
+        currentDay = time.strftime("%A")
+        alarmPopup = Popup(title='Set Your Alarm for {}:'.format(currentDay), content=box, size_hint=(.9, .9))
         dismissButton.bind(on_press=partial(dismissButton.dismissPopup, alarmPopup, hourbutton, minutebutton))
         alarmPopup.open()
 
@@ -143,18 +146,18 @@ class SetAlarmButton(Button):
 
         #default state of alarm button before any alarms are set
         if(alarm_hour == 0 and alarm_minute == 0):
-            self.text = "Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
+            self.text = "    Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
 
         #text formatting to properly display the current alarm
         else:
             if(alarm_hour < 10 and alarm_minute < 10):
-                self.text = "Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
+                self.text = "             Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
             elif(alarm_minute < 10):
-                self.text = "Set Alarm\n Alarm is Currently {}:0{}".format(alarm_hour, alarm_minute)
+                self.text = "             Set Alarm\n Alarm is Currently {}:0{}".format(alarm_hour, alarm_minute)
             elif(alarm_hour < 10):
-                self.text = "Set Alarm\n Alarm is Currently 0{}:{}".format(alarm_hour, alarm_minute)
+                self.text = "             Set Alarm\n Alarm is Currently 0{}:{}".format(alarm_hour, alarm_minute)
             else:
-                self.text = "Set Alarm\n Alarm is Currently {}:{}".format(alarm_hour, alarm_minute)
+                self.text = "             Set Alarm\n Alarm is Currently {}:{}".format(alarm_hour, alarm_minute)
 
 #special button added to the popup to ensure user selects and alarm and then saves it 
 class PopupDismissButton(Button):
@@ -162,7 +165,7 @@ class PopupDismissButton(Button):
         super(PopupDismissButton, self).__init__(**kwargs)
         self.text = "Set Alarm"
         self.size_hint=(.2,.2);
-        self.pos_hint={'x':.5, 'y':.2}
+        self.pos_hint={'x':.4, 'y':.2}
 
     def dismissPopup(self, instance, button1, button2, button3):
         global alarm_hour
@@ -210,8 +213,8 @@ class ClockLabel(Label):
         global weather_stat
         global news_stat
 
-        os.system("pico2wave -w alarm.wav \"Beep Beep Beep!\" && aplay alarm.wav")
-        
+        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up!\" && aplay alarm.wav")
+
 
         
 #class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
@@ -274,10 +277,12 @@ class SmartSleepCheckBox(CheckBox):
         global smart_sleep
         smart_sleep = store.get('smart_sleep')['status']
 
-    smart_sleep1= ObjectProperty(False)
+    smart_sleep1= ObjectProperty()
 
     if(smart_sleep == 1):
         smart_sleep1 = ObjectProperty(True)
+    else:
+        smart_sleep1 = ObjectProperty(False)
             
     def __init__(self, **kwargs):
         super(SmartSleepCheckBox, self).__init__(**kwargs)
@@ -306,10 +311,12 @@ class NewsCheckBox(CheckBox):
         global news_stat
         news_stat = store.get('news_stat')['status']
     
-    active = False
+    
 
     if(news_stat == 1):
         active = True
+    else:
+        active = False
     
     def __init__(self, **kwargs):
         super(NewsCheckBox, self).__init__(**kwargs)
