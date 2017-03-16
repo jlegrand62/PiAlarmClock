@@ -32,6 +32,7 @@ alarm_hour = 0
 alarm_minute = 0
 alarm_changed = 0
 wait_next_minute = 0
+smart_sleep_count = 0
 
 #status labels for Settings page which update based on state of their corresponding checkbox
 class WeatherStatusLabel(Label):
@@ -277,10 +278,56 @@ class SleepButton(Button):
     def on_press(self):
         if self.text == "Good Night":
             os.system("echo 55 > /sys/class/backlight/rpi_backlight/brightness")
+            now = datetime.datetime.now()
             self.text = "Good Morning"
         else:
-            self.text = "Good Night"
             os.system("echo 255 > /sys/class/backlight/rpi_backlight/brightness")
+            global smart_sleep
+            if(smart_sleep == 1):
+                if store.exists('smart_sleep_count'):
+                    global smart_sleep_count
+                    smart_sleep_count = store.get('smart_sleep_count')['count']
+
+                global smart_sleep_count
+
+                if(smart_sleep_count == 7):
+                    average = 0
+                    
+                    for i in xrange(1, 8):
+                        day = 'Day{}'.format(smart_sleep_count)
+                        temp = store.get(day)['total_time']
+                        average = average + temp
+
+                    average = average/7
+
+                    counter = 0
+                    while(average >=60):
+                        average = average - 60
+                        counter = counter+1
+
+                    store.put('Monday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Tuesday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Wednesday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Thursday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Friday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Saturday', alarm_hour = counter, alarm_minute = average)
+                    store.put('Sunday', alarm_hour = counter, alarm_minute = average)
+                    
+                    
+                else:
+                    smart_sleep_count = smart_sleep_count+1
+                    store.put('smart_sleep_count', count = smart_sleep_count)
+
+                    now = datetime.datetime.now()
+                    wake_hour = int(now.hour)
+                    wake_min = int(now.minute)
+                    total_time = wake_hour*60 + wake_min
+                    day = 'Day{}'.format(smart_sleep_count)
+                    store.put(day, total_time = total_time)
+
+                
+                
+            self.text = "Good Night"
             
 #main screen of the app for use with screenmanager
 class ClockScreen(Screen):
@@ -291,7 +338,7 @@ class SpecialFloatLayout(FloatLayout):
 
 #settings screen for use with screenmanager
 class SettingsScreen(Screen):
-    #this allows for persistent storage to update the states of the checkboxes in the settings
+    #this allows for persistent storage to update the states of the labels in the settings
         if store.exists('weather_stat'):
             global weather_stat
             weather_stat = store.get('weather_stat')['status']
