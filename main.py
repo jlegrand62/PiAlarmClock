@@ -39,7 +39,7 @@ class WeatherStatusLabel(Label):
         super(WeatherStatusLabel, self).__init__(**kwargs)
         self.text = "[color=f44253]Disabled[/color]"
         self.markup=True
-        Clock.schedule_interval(self.update, 0.5)
+        Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
         global weather_stat
@@ -53,7 +53,7 @@ class SmartSleepStatusLabel(Label):
         super(SmartSleepStatusLabel, self).__init__(**kwargs)
         self.text = "[color=f44253]Disabled[/color]"
         self.markup=True
-        Clock.schedule_interval(self.update, 0.5)
+        Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
         global smart_sleep
@@ -67,7 +67,7 @@ class NewsStatusLabel(Label):
         super(NewsStatusLabel, self).__init__(**kwargs)
         self.text = "[color=f44253]Disabled[/color]"
         self.markup=True
-        Clock.schedule_interval(self.update, 0.5)
+        Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
         global news_stat
@@ -75,6 +75,57 @@ class NewsStatusLabel(Label):
             self.text = "[color=f44253]Disabled[/color]"
         else:
             self.text = "[color=42f445]Enabled[/color]"
+
+#buttons to set news/smartsleep/weather mdoules as active/inactive
+class WeatherStatButton(Button):
+    def __init__(self, **kwargs):
+        super(WeatherStatButton, self).__init__(**kwargs)
+        self.text = "Weather Module"
+
+        if store.exists('weather_stat'):
+            global weather_stat
+            weather_stat = store.get('weather_stat')['status']
+
+    def updateWeather(self):
+        global weather_stat
+        if(weather_stat == 0):
+            store.put('weather_stat', status=1)
+            weather_stat = 1
+        else:
+            store.put('weather_stat', status=0)
+            weather_stat = 0
+
+class NewsStatButton(Button):
+    def __init__(self, **kwargs):
+        super(NewsStatButton, self).__init__(**kwargs)
+        self.text = "News Module"
+
+        if store.exists('news_stat'):
+            global weather_stat
+            weather_stat = store.get('news_stat')['status']
+
+    def updateNews(self):
+        global news_stat
+        if(news_stat == 0):
+            store.put('news_stat', status=1)
+            news_stat = 1
+        else:
+            store.put('news_stat', status=0)
+            news_stat = 0
+
+class SmartSleepStatButton(Button):
+    def __init__(self, **kwargs):
+        super(SmartSleepStatButton, self).__init__(**kwargs)
+        self.text = "SmartSleep Module"
+
+    def updateSmartSleep(self):
+        global smart_sleep
+        if(smart_sleep == 0):
+            store.put('smart_sleep', status=1)
+            smart_sleep = 1
+        else:
+            store.put('smart_sleep', status=0)
+            smart_sleep = 0
 
 #alarm picker button class and methods
 class SetAlarmButton(Button):
@@ -238,119 +289,6 @@ class ClockScreen(Screen):
 class SpecialFloatLayout(FloatLayout):
     pass
 
-#checkboxes on the settings screen to allow the user to set which features they want
-class WeatherCheckBox(CheckBox):
-    #updates from json storage
-    if store.exists('weather_stat'):
-        global weather_stat
-        weather_stat = store.get('weather_stat')['status']
-
-    weather_stat1 = ObjectProperty(False)
-
-    if(weather_stat == 1):
-            weather_stat1 = ObjectProperty(True)
-            
-    def __init__(self, **kwargs):
-        super(WeatherCheckBox, self).__init__(**kwargs)
-        Clock.schedule_interval(self.update, 0.5)
-
-    def update(self, *args):
-        global weather_stat
-
-        if(weather_stat == 1):
-            weather_stat1 = ObjectProperty(True)
-        else:
-            weather_stat1 = ObjectProperty(False)
-
-    def updateWeather(self):
-        global weather_stat
-        if(weather_stat == 0):
-            store.put('weather_stat', status=1)
-            weather_stat = 1
-        else:
-            store.put('weather_stat', status=0)
-            weather_stat = 0
-
-class SmartSleepCheckBox(CheckBox):
-    #updates from json storage
-    if store.exists('smart_sleep'):
-        global smart_sleep
-        smart_sleep = store.get('smart_sleep')['status']
-
-    smart_sleep1= ObjectProperty()
-
-    if(smart_sleep == 1):
-        smart_sleep1 = ObjectProperty(True)
-    else:
-        smart_sleep1 = ObjectProperty(False)
-            
-    def __init__(self, **kwargs):
-        super(SmartSleepCheckBox, self).__init__(**kwargs)
-        Clock.schedule_interval(self.update, 0.5)
-
-    def update(self, *args):
-        global smart_sleep
-
-        if(smart_sleep == 1):
-            smart_sleep1 = ObjectProperty(True)
-        else:
-            smart_sleep1 = ObjectProperty(False)
-
-    def updateSmartSleep(self):
-        global smart_sleep
-        if(smart_sleep == 0):
-            store.put('smart_sleep', status=1)
-            smart_sleep = 1
-        else:
-            store.put('smart_sleep', status=0)
-            smart_sleep = 0
-
-class NewsCheckBox(CheckBox):
-    #updates from json storage
-    if store.exists('news_stat'):
-        global news_stat
-        news_stat = store.get('news_stat')['status']
-    
-    
-
-    if(news_stat == 1):
-        active = True
-    else:
-        active = False
-    
-    def __init__(self, **kwargs):
-        super(NewsCheckBox, self).__init__(**kwargs)
-        #updates from json storage
-        if store.exists('news_stat'):
-                global news_stat
-                news_stat = store.get('news_stat')['status']
-        
-        if(news_stat == 1):
-            active = True
-        else:
-            active = False
-            
-        Clock.schedule_interval(self.update, 0.5)
-
-    def update(self, *args):
-        global news_stat
-
-        if(news_stat == 1):
-            active = True
-        else:
-            active = False
-
-    def updateNews(self):
-        global news_stat
-        if(news_stat == 0):
-            store.put('news_stat', status=1)
-            news_stat = 1
-            news_stat1 = ObjectProperty(True)
-        else:
-            store.put('news_stat', status=0)
-            news_stat = 0
-            news_stat1 = ObjectProperty(False)
-
 #settings screen for use with screenmanager
 class SettingsScreen(Screen):
     #this allows for persistent storage to update the states of the checkboxes in the settings
@@ -364,20 +302,7 @@ class SettingsScreen(Screen):
 
         if store.exists('smart_sleep'):
             global smart_sleep
-            smart_sleep = store.get('smart_sleep')['status']
-            
-        weather_stat1 = ObjectProperty(False)
-        news_stat1 = ObjectProperty(False)
-        smart_sleep1= ObjectProperty(False)
-
-        if(weather_stat == 1):
-            weather_stat1 = ObjectProperty(True)
-
-        if(news_stat == 1):
-            news_stat1 = ObjectProperty(True)
-
-        if(smart_sleep == 1):
-            smart_sleep1 = ObjectProperty(True)  
+            smart_sleep = store.get('smart_sleep')['status'] 
 
 #screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
@@ -404,7 +329,6 @@ class MezaApp(App):
         alarmButton = SetAlarmButton()
         sleeper = SleepButton()
         weatherStat = WeatherStatusLabel()
-        weatherBox = WeatherCheckBox()
         
         return app
 

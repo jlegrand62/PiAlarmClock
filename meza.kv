@@ -10,7 +10,7 @@ ScreenHandler:
     font_size: 50
 
 <SetAlarmButton>:
-    font_size: 22
+    font_size: 16
 
 <SleepButton>:
     font_size: 25
@@ -45,7 +45,7 @@ ScreenHandler:
 
         SetAlarmButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*.65
+            pos: root.width * 0.38, root.height*.68
             on_press: self.alarmPopup()
 
         ClockLabel:
@@ -54,7 +54,7 @@ ScreenHandler:
 
         SleepButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*0.33
+            pos: root.width * 0.38, root.height*0.28
 
 <SpecialFloatLayout>
 
@@ -76,56 +76,33 @@ ScreenHandler:
                 root.manager.current = "clock"
             pos_hint: {"left":1, "top":1}
 
-        Label:
-            font_size: 20
-            size_hint: 0.1, 0.1
-            text: "Weather"
-            pos: root.width * 0.2, root.height * 0.3
-
-        Label:
-            font_size: 20
-            size_hint: 0.1, 0.1
-            text: "SmartSleep"
-            pos: root.width * 0.4, root.height * 0.3
-
-        Label:
-            font_size: 20
-            size_hint: 0.1, 0.1
-            text: "News"
-            pos: root.width * 0.6, root.height * 0.3
-
-        WeatherCheckBox:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.2, root.height * 0.2
-            id: weather_stat1
-            active: self.weather_stat1
-            on_press: self.updateWeather()
-
-        SmartSleepCheckBox:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.4, root.height * 0.2
-            id: smart_sleep1
-            active: self.smart_sleep1
-            on_press: self.updateSmartSleep()
-
-        NewsCheckBox:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.6, root.height * 0.2
-            id: news_stat1
-            on_press: self.updateNews()
-
         WeatherStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.2, root.height * 0.06
+            pos: root.width * 0.22, root.height * 0.06
             id: wl
 
         SmartSleepStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.4, root.height * 0.06
+            pos: root.width * 0.42, root.height * 0.06
 
         NewsStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.6, root.height * 0.06
+            pos: root.width * 0.62, root.height * 0.06
+
+        WeatherStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.2, root.height * 0.3
+            on_press: self.updateWeather()
+
+        SmartSleepStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.3
+            on_press: self.updateSmartSleep()
+
+        NewsStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.6, root.height * 0.3
+            on_press: self.updateNews()
 
         
 
