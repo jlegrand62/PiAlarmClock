@@ -291,10 +291,15 @@ class SleepButton(Button):
                 global smart_sleep_count
 
                 if(smart_sleep_count == 7):
-                    average = 0
+                    smart_sleep_count = 0
+                    store.put('smart_sleep_count', count = 0)
+                    smart_sleep = 0
+                    store.put('smart_sleep', status=0)
                     
+                    
+                    average = 0
                     for i in xrange(1, 8):
-                        day = 'Day{}'.format(smart_sleep_count)
+                        day = 'Day{}'.format(i)
                         temp = store.get(day)['total_time']
                         average = average + temp
 
@@ -316,6 +321,7 @@ class SleepButton(Button):
                     
                 else:
                     smart_sleep_count = smart_sleep_count+1
+                    print(smart_sleep_count)
                     store.put('smart_sleep_count', count = smart_sleep_count)
 
                     now = datetime.datetime.now()
