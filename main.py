@@ -1,5 +1,7 @@
 import kivy
 import os
+import pyowm
+import json
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProperty
@@ -24,6 +26,7 @@ from functools import partial
 
 
 kivy.require("1.9.1")
+owm = pyowm.OWM('f8ad5034578b3193450b67823d91f5bf')
 store = JsonStore('settings.json')
 smart_sleep = 0
 weather_stat = 0
@@ -264,10 +267,23 @@ class ClockLabel(Label):
         global smart_sleep
         global weather_stat
         global news_stat
+        import time
+        weather = ''
 
-        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up!\" && aplay alarm.wav")
-
-
+        if(weather_stat == 1):
+            observation = owm.weather_at_place("06106")
+            w = observation.get_weather()
+            status = w.get_status()
+            weather = ' The weather today is: {}'.format(status)
+            
+            
+        currentDay = time.strftime("%A")
+        currentDayNum = time.strftime("%d")
+        currentMonth = time.strftime("%B")
+        currentYear = time.strftime("%Y")
+        time = 'Today is {}, {} {} {}'.format(currentDay, currentMonth, currentDayNum, currentYear)
+        
+        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {}\" && aplay alarm.wav".format(time, weather))
         
 #class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
 class SleepButton(Button):
@@ -318,10 +334,8 @@ class SleepButton(Button):
                     store.put('Saturday', alarm_hour = counter, alarm_minute = average)
                     store.put('Sunday', alarm_hour = counter, alarm_minute = average)
                     
-                    
                 else:
                     smart_sleep_count = smart_sleep_count+1
-                    print(smart_sleep_count)
                     store.put('smart_sleep_count', count = smart_sleep_count)
 
                     now = datetime.datetime.now()
@@ -330,8 +344,6 @@ class SleepButton(Button):
                     total_time = wake_hour*60 + wake_min
                     day = 'Day{}'.format(smart_sleep_count)
                     store.put(day, total_time = total_time)
-
-                
                 
             self.text = "Good Night"
             
