@@ -150,9 +150,9 @@ class SetAlarmButton(Button):
         hourdropdown = DropDown()
         for i in range(24):
             if(i<10):
-                btn=Button(text = '0%r' % i, size_hint_y=None, height =50)
+                btn=Button(text = '0%r' % i, size_hint_y=None, height =70)
             else:
-                btn=Button(text = '%r' % i, size_hint_y=None, height =50)
+                btn=Button(text = '%r' % i, size_hint_y=None, height =70)
             btn.bind(on_release=lambda btn: hourdropdown.select(btn.text))
             hourdropdown.add_widget(btn)
 
@@ -169,9 +169,9 @@ class SetAlarmButton(Button):
         minutedropdown = DropDown()
         for i in range(60):
             if(i<10):
-                btn=Button(text = '0%r' % i, size_hint_y=None, height =30)
+                btn=Button(text = '0%r' % i, size_hint_y=None, height =70)
             else:
-                btn=Button(text = '%r' % i, size_hint_y=None, height =30)
+                btn=Button(text = '%r' % i, size_hint_y=None, height =70)
             btn.bind(on_release=lambda btn: minutedropdown.select(btn.text))
             minutedropdown.add_widget(btn)
         
@@ -274,7 +274,34 @@ class ClockLabel(Label):
             observation = owm.weather_at_place("06106")
             w = observation.get_weather()
             status = w.get_status()
-            weather = ' The weather today is: {}'.format(status)
+            if(status == "rain"):
+                stat = " Bring an umbrella or rain coat with you."
+            elif(status == "snow" or status == "hail"):
+                stat = " Warm clothing and boots advised."
+            else:
+                stat = ""
+    
+            temp_fetch = w.get_temperature('fahrenheit')
+            temp_read = temp_fetch["temp"]
+            if(temp_read <= 32.00):
+                temp = "It is very cold today. Bring a heavy jacket with you. "
+            elif(temp_read <= 43.00):
+                temp = "It is cold today.  Bring a jacket with you. "
+            elif (teamp_read <=60.00):
+                temp = "It is mild outside today.  A light jacket would be a good idea. "
+            elif(team_read <= 72.00):
+                temp = "It is warm outside today. Long pants are not necessary.  Bring a jacket if it is windy. "
+            else:
+                temp = "It is hot outside today.  Make sure to bring water with you and wear something light. "
+                    
+            wind_fetch = w.get_wind()
+            wind_read = wind_fetch["speed"]
+            if(wind_read >= 6.00):
+                wind = "It is windy today."
+            else:
+                wind = ""
+            
+            weather = ' The weather right now is, {}. {}.  It is currently {} degrees Farenheit. {} {}'.format(status, stat, temp_read, wind, temp)
             
             
         currentDay = time.strftime("%A")
@@ -343,7 +370,12 @@ class SleepButton(Button):
                     wake_min = int(now.minute)
                     total_time = wake_hour*60 + wake_min
                     day = 'Day{}'.format(smart_sleep_count)
-                    store.put(day, total_time = total_time)
+                    currentDay = time.strftime("%A")
+                    if(currentDay == "Saturday" or currentDay == "Sunday"):
+                        weekend = 1
+                    else:
+                        weekend = 0
+                    store.put(day, total_time = total_time, isWeekend = weekend)
                 
             self.text = "Good Night"
             
