@@ -21,8 +21,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.dropdown import DropDown
+from kivy.uix.textinput import TextInput
 from kivy.storage.jsonstore import JsonStore
 from functools import partial
+import newspaper
+from newspaper import Article, Source, Config
 
 
 kivy.require("1.9.1")
@@ -36,6 +39,8 @@ alarm_minute = 0
 alarm_changed = 0
 wait_next_minute = 0
 smart_sleep_count = 0
+weather_zip = '06106'
+
 
 #status labels for Settings page which update based on state of their corresponding checkbox
 class WeatherStatusLabel(Label):
@@ -130,6 +135,17 @@ class SmartSleepStatButton(Button):
         else:
             store.put('smart_sleep', status=0)
             smart_sleep = 0
+
+class WeatherLocInput(TextInput):
+    def __init__(self, **kwargs):
+        super(WeatherLocInput, self).__init__(**kwargs)
+        
+        self.multiline = False
+
+    def updateLoc(self):
+        global weather_zip
+        store.put('weather_zip', zip_cope = self.text)
+        weather_zip = self.text
 
 #alarm picker button class and methods
 class SetAlarmButton(Button):
@@ -269,9 +285,10 @@ class ClockLabel(Label):
         global news_stat
         import time
         weather = ''
+        news = ''
 
         if(weather_stat == 1):
-            observation = owm.weather_at_place("06106")
+            observation = owm.weather_at_place(weather_zip)
             w = observation.get_weather()
             status = w.get_status()
             if(status == "rain"):
@@ -287,9 +304,9 @@ class ClockLabel(Label):
                 temp = "It is very cold today. Bring a heavy jacket with you. "
             elif(temp_read <= 43.00):
                 temp = "It is cold today.  Bring a jacket with you. "
-            elif (teamp_read <=60.00):
+            elif (temp_read <=60.00):
                 temp = "It is mild outside today.  A light jacket would be a good idea. "
-            elif(team_read <= 72.00):
+            elif(temp_read <= 72.00):
                 temp = "It is warm outside today. Long pants are not necessary.  Bring a jacket if it is windy. "
             else:
                 temp = "It is hot outside today.  Make sure to bring water with you and wear something light. "
@@ -302,15 +319,25 @@ class ClockLabel(Label):
                 wind = ""
             
             weather = ' The weather right now is, {}. {}.  It is currently {} degrees Farenheit. {} {}'.format(status, stat, temp_read, wind, temp)
+
+        if(news_stat == 1):
             
+            cnn_paper = newspaper.build('http://cnn.com')
+            first_article = cnn_paper.articles[0]
+            first_article.download()
+            first_article.parse()
+            title = first_article.title
+            summary = first_article.summary
+            news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, summary)
             
         currentDay = time.strftime("%A")
         currentDayNum = time.strftime("%d")
         currentMonth = time.strftime("%B")
         currentYear = time.strftime("%Y")
-        time = 'Today is {}, {} {} {}'.format(currentDay, currentMonth, currentDayNum, currentYear)
+        time = 'Today is {}, {} {} {},'.format(currentDay, currentMonth, currentDayNum, currentYear)
         
-        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {}\" && aplay alarm.wav".format(time, weather))
+        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(time, weather, news))
+
         
 #class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
 class SleepButton(Button):

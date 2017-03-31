@@ -104,6 +104,12 @@ ScreenHandler:
             pos: root.width * 0.6, root.height * 0.3
             on_press: self.updateNews()
 
+        WeatherLocInput:
+            size_hint: 0.15, 0.05
+            pos: root.width * 0.4, root.height * 0.5
+            on_text_validate: self.updateLoc()
+            on_parent: self.focus = True
+
         
 
 
