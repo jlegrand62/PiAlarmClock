@@ -24,6 +24,7 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.textinput import TextInput
 from kivy.storage.jsonstore import JsonStore
 from functools import partial
+import re
 import newspaper
 from newspaper import Article, Source, Config
 
@@ -34,12 +35,14 @@ store = JsonStore('settings.json')
 smart_sleep = 0
 weather_stat = 0
 news_stat = 0
+news_article_num = 1
 alarm_hour = 0
 alarm_minute = 0
 alarm_changed = 0
 wait_next_minute = 0
 smart_sleep_count = 0
 weather_zip = '06106'
+cnn_paper = newspaper.build('http://cnn.com')
 
 
 #status labels for Settings page which update based on state of their corresponding checkbox
@@ -135,6 +138,37 @@ class SmartSleepStatButton(Button):
         else:
             store.put('smart_sleep', status=0)
             smart_sleep = 0
+
+class NewsArticleNum(Button):
+    def __init__(self, **kwargs):
+        super(NewsArticleNum, self).__init__(**kwargs)
+        self.text = "Number of News Articles"
+
+    def updateArticleNum(self):
+        global news_article_num
+        if(news_article_num == 1):
+            store.put('news_article_num', status = 3)
+            news_article_num = 3
+
+        elif(news_article_num == 3):
+            store.put('news_article_num', status = 5)
+            news_article_num = 5
+
+        elif(news_article_num == 5):
+            store.put('news_article_num', status = 1)
+            news_article_num = 1
+        
+class NewsArticleNumLabel(Label):
+    def __init__(self, **kwargs):
+        super(NewsArticleNumLabel, self).__init__(**kwargs)
+        global news_article_num
+        self.text = "{}".format(news_article_num)
+        Clock.schedule_interval(self.update, 0.2)
+
+    def update(self, *args):
+        global news_article_num
+        self.text = "{}".format(news_article_num)
+        
 
 class WeatherLocInput(TextInput):
     def __init__(self, **kwargs):
@@ -291,9 +325,10 @@ class ClockLabel(Label):
             observation = owm.weather_at_place(weather_zip)
             w = observation.get_weather()
             status = w.get_status()
-            if(status == "rain"):
+            string_status = "{}".format(status)
+            if(string_status == "Rain"):
                 stat = " Bring an umbrella or rain coat with you."
-            elif(status == "snow" or status == "hail"):
+            elif(string_status == "Snow" or string_status == "Hail"):
                 stat = " Warm clothing and boots advised."
             else:
                 stat = ""
@@ -301,19 +336,19 @@ class ClockLabel(Label):
             temp_fetch = w.get_temperature('fahrenheit')
             temp_read = temp_fetch["temp"]
             if(temp_read <= 32.00):
-                temp = "It is very cold today. Bring a heavy jacket with you. "
+                temp = "It is very cold today. Bring a heavy jacket with you and wear layers. "
             elif(temp_read <= 43.00):
-                temp = "It is cold today.  Bring a jacket with you. "
+                temp = "It is cold today.  Wear warm clothing and bring a jacket. "
             elif (temp_read <=60.00):
-                temp = "It is mild outside today.  A light jacket would be a good idea. "
+                temp = "It is mild outside today.  A light jacket or sweatshirt would be a good idea. "
             elif(temp_read <= 72.00):
-                temp = "It is warm outside today. Long pants are not necessary.  Bring a jacket if it is windy. "
+                temp = "It is warm outside today. Long pants are not necessary.  Bring a light jacket if it is windy. "
             else:
                 temp = "It is hot outside today.  Make sure to bring water with you and wear something light. "
                     
             wind_fetch = w.get_wind()
             wind_read = wind_fetch["speed"]
-            if(wind_read >= 6.00):
+            if(wind_read >= 4.00):
                 wind = "It is windy today."
             else:
                 wind = ""
@@ -322,13 +357,17 @@ class ClockLabel(Label):
 
         if(news_stat == 1):
             
-            cnn_paper = newspaper.build('http://cnn.com')
+            global cnn_paper
             first_article = cnn_paper.articles[0]
             first_article.download()
             first_article.parse()
+            first_article.nlp()
             title = first_article.title
             summary = first_article.summary
-            news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, summary)
+            escaped_summary = re.sub(r'"[]/|\{}','',summary) 
+            print(title)
+            print(escaped_summary)
+            news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, escaped_summary)
             
         currentDay = time.strftime("%A")
         currentDayNum = time.strftime("%d")
@@ -426,7 +465,11 @@ class SettingsScreen(Screen):
 
         if store.exists('smart_sleep'):
             global smart_sleep
-            smart_sleep = store.get('smart_sleep')['status'] 
+            smart_sleep = store.get('smart_sleep')['status']
+
+        if store.exists('news_article_num'):
+            global news_article_num
+            news_article_num = store.get('news_article_num')['status']
 
 #screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
@@ -447,6 +490,10 @@ class MezaApp(App):
         if store.exists('smart_sleep'):
             global smart_sleep
             smart_sleep = store.get('smart_sleep')['status']
+
+        if store.exists('news_article_num'):
+            global news_article_num
+            news_article_num = store.get('news_article_num')['status']
             
         app = Builder.load_file("meza.kv")
         crudeclock = ClockLabel()

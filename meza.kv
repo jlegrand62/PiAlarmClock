@@ -110,6 +110,14 @@ ScreenHandler:
             on_text_validate: self.updateLoc()
             on_parent: self.focus = True
 
+        NewsArticleNum:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.8
+            on_press: self.updateArticleNum()
+
+        NewsArticleNumLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.43, root.height * 0.65
         
 
 
