@@ -42,7 +42,7 @@ alarm_changed = 0
 wait_next_minute = 0
 smart_sleep_count = 0
 weather_zip = '06106'
-cnn_paper = newspaper.build('http://cnn.com')
+cnn_paper = newspaper.build('http://cnn.com', memoize_articles=False)
 
 
 #status labels for Settings page which update based on state of their corresponding checkbox
@@ -322,7 +322,7 @@ class ClockLabel(Label):
         news = ''
 
         if(weather_stat == 1):
-            observation = owm.weather_at_place(weather_zip)
+            observation = owm.weather_at_place('06106')
             w = observation.get_weather()
             status = w.get_status()
             string_status = "{}".format(status)
@@ -356,18 +356,52 @@ class ClockLabel(Label):
             weather = ' The weather right now is, {}. {}.  It is currently {} degrees Farenheit. {} {}'.format(status, stat, temp_read, wind, temp)
 
         if(news_stat == 1):
-            
-            global cnn_paper
-            first_article = cnn_paper.articles[0]
-            first_article.download()
-            first_article.parse()
-            first_article.nlp()
-            title = first_article.title
-            summary = first_article.summary
-            escaped_summary = re.sub(r'"[]/|\{}','',summary) 
-            print(title)
-            print(escaped_summary)
-            news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, escaped_summary)
+            global news_article_num
+            if(news_article_num == 1):
+                global cnn_paper
+                first_article = cnn_paper.articles[0]
+                first_article.download()
+                first_article.parse()
+                first_article.nlp()
+                title = first_article.title.encode('ascii', 'ignore').decode('ascii')
+                summary = first_article.summary.encode('ascii', 'ignore').decode('ascii')
+                escaped_summary = summary.replace('"', '')
+                print(title)
+                print(escaped_summary)
+                news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, escaped_summary)
+                news = news.encode('ascii', 'ignore').decode('ascii')
+
+            if(news_article_num == 3):
+                global cnn_paper
+                articles = []
+                titles = []
+                summary = []
+                for i in range(3):
+                    articles.append(cnn_paper.articles[i+1])
+                    articles[i].download()
+                    articles[i].parse()
+                    articles[i].nlp()
+                    titles.append(articles[i].title.encode('ascii', 'ignore').decode('ascii'))
+                    summary.append((articles[i].summary).replace('"', '').encode('ascii', 'ignore').decode('ascii'))
+
+                news = ' Now for daily news from CNN, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2]).encode('ascii', 'ignore').decode('ascii')
+                
+
+            if(news_article_num == 5):
+                global cnn_paper
+                articles = []
+                titles = []
+                summary = []
+                for i in range(5):
+                    articles.append(cnn_paper.articles[i+1])
+                    articles[i].download()
+                    articles[i].parse()
+                    articles[i].nlp()
+                    titles.append(articles[i].title.encode('ascii', 'ignore').decode('ascii'))
+                    summary.append((articles[i].summary).replace('"', '').encode('ascii', 'ignore').decode('ascii'))
+
+                news = ' Now for daily news from CNN, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. Article 4: {} , {}. Article 5: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2], titles[3], summary[3], titles[4], summary[4])
+                news = news.encode('ascii', 'ignore').decode('ascii')
             
         currentDay = time.strftime("%A")
         currentDayNum = time.strftime("%d")
