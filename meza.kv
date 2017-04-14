@@ -56,6 +56,11 @@ ScreenHandler:
             size_hint: 0.22, 0.17
             pos: root.width * 0.38, root.height*0.28
 
+        AlarmStopButton:
+            size_hint: 0.22, 0.17
+            pos: root.width * 0.38, root.height*0.10
+            font_size: 35
+
 <SpecialFloatLayout>
 
 <WeatherCheckBox>
@@ -116,8 +121,17 @@ ScreenHandler:
             on_press: self.updateArticleNum()
 
         NewsArticleNumLabel:
-            size_hint: 0.1, 0.1
-            pos: root.width * 0.43, root.height * 0.65
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.53, root.height * 0.8
+
+        NewsSourceButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.6
+            on_press: self.updateNewsSource()
+
+        NewsSourceLabel:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.53, root.height * 0.6
         
 
 

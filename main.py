@@ -1,5 +1,7 @@
 import kivy
 import os
+import signal
+import subprocess
 import pyowm
 import json
 from kivy.app import App
@@ -41,8 +43,12 @@ alarm_minute = 0
 alarm_changed = 0
 wait_next_minute = 0
 smart_sleep_count = 0
+alarm_pid = 999999999999
+sub_process = 0
 weather_zip = '06106'
-cnn_paper = newspaper.build('http://cnn.com', memoize_articles=False)
+paper_url = 'http://npr.org'
+paper_name = 'NPR'
+paper = newspaper.build(paper_url , memoize_articles=False)
 
 
 #status labels for Settings page which update based on state of their corresponding checkbox
@@ -128,7 +134,7 @@ class NewsStatButton(Button):
 class SmartSleepStatButton(Button):
     def __init__(self, **kwargs):
         super(SmartSleepStatButton, self).__init__(**kwargs)
-        self.text = "SmartSleep Module"
+        self.text = "SmartSleep \n   Module"
 
     def updateSmartSleep(self):
         global smart_sleep
@@ -142,7 +148,7 @@ class SmartSleepStatButton(Button):
 class NewsArticleNum(Button):
     def __init__(self, **kwargs):
         super(NewsArticleNum, self).__init__(**kwargs)
-        self.text = "Number of News Articles"
+        self.text = "News Articles:"
 
     def updateArticleNum(self):
         global news_article_num
@@ -180,6 +186,41 @@ class WeatherLocInput(TextInput):
         global weather_zip
         store.put('weather_zip', zip_cope = self.text)
         weather_zip = self.text
+
+class NewsSourceButton(Button):
+    def __init__(self, **kwargs):
+        super(NewsSourceButton, self).__init__(**kwargs)
+        self.text = "News Source:"
+
+    def updateNewsSource(self):
+        global paper_url
+        global paper_name
+        global paper
+        if(paper_url == 'http://npr.org'):
+            paper_url = 'http://bbc.com/news/technology'
+            paper_name = 'BBC'
+            paper = newspaper.build(paper_url , memoize_articles=False)
+
+        elif(paper_url == 'http://bbc.com/news/technology'):
+            paper_url = 'http://wsj.com/news/technology'
+            paper_name = 'WSJ'
+            paper = newspaper.build(paper_url , memoize_articles=False)
+
+        elif(paper_url == 'http://wsj.com/news/technology'):
+            paper_url = 'http://npr.org'
+            paper_name = 'NPR'
+            paper = newspaper.build(paper_url , memoize_articles=False)
+
+class NewsSourceLabel(Label):
+    def __init__(self, **kwargs):
+        super(NewsSourceLabel, self).__init__(**kwargs)
+        global paper_name
+        self.text = "{}".format(paper_name)
+        Clock.schedule_interval(self.update, 0.2)
+
+    def update(self, *args):
+        global paper_name
+        self.text = "{}".format(paper_name)
 
 #alarm picker button class and methods
 class SetAlarmButton(Button):
@@ -340,7 +381,7 @@ class ClockLabel(Label):
             elif(temp_read <= 43.00):
                 temp = "It is cold today.  Wear warm clothing and bring a jacket. "
             elif (temp_read <=60.00):
-                temp = "It is mild outside today.  A light jacket or sweatshirt would be a good idea. "
+                temp = "It is temperate outside today.  A light jacket or sweatshirt would be a good idea. "
             elif(temp_read <= 72.00):
                 temp = "It is warm outside today. Long pants are not necessary.  Bring a light jacket if it is windy. "
             else:
@@ -359,7 +400,7 @@ class ClockLabel(Label):
             global news_article_num
             if(news_article_num == 1):
                 global cnn_paper
-                first_article = cnn_paper.articles[0]
+                first_article = cnn_paper.articles[2]
                 first_article.download()
                 first_article.parse()
                 first_article.nlp()
@@ -368,7 +409,7 @@ class ClockLabel(Label):
                 escaped_summary = summary.replace('"', '')
                 print(title)
                 print(escaped_summary)
-                news = ' Now for daily news from CNN, Article 1: {} , {}'.format(title, escaped_summary)
+                news = ' Now for daily news, Article 1: {} , {}'.format(title, escaped_summary)
                 news = news.encode('ascii', 'ignore').decode('ascii')
 
             if(news_article_num == 3):
@@ -377,14 +418,15 @@ class ClockLabel(Label):
                 titles = []
                 summary = []
                 for i in range(3):
-                    articles.append(cnn_paper.articles[i+1])
+                    articles.append(cnn_paper.articles[i+2])
                     articles[i].download()
                     articles[i].parse()
                     articles[i].nlp()
+                    print(articles[i].url)
                     titles.append(articles[i].title.encode('ascii', 'ignore').decode('ascii'))
                     summary.append((articles[i].summary).replace('"', '').encode('ascii', 'ignore').decode('ascii'))
 
-                news = ' Now for daily news from CNN, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2]).encode('ascii', 'ignore').decode('ascii')
+                news = ' Now for daily news, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2]).encode('ascii', 'ignore').decode('ascii')
                 
 
             if(news_article_num == 5):
@@ -393,14 +435,14 @@ class ClockLabel(Label):
                 titles = []
                 summary = []
                 for i in range(5):
-                    articles.append(cnn_paper.articles[i+1])
+                    articles.append(cnn_paper.articles[i+2])
                     articles[i].download()
                     articles[i].parse()
                     articles[i].nlp()
                     titles.append(articles[i].title.encode('ascii', 'ignore').decode('ascii'))
                     summary.append((articles[i].summary).replace('"', '').encode('ascii', 'ignore').decode('ascii'))
 
-                news = ' Now for daily news from CNN, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. Article 4: {} , {}. Article 5: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2], titles[3], summary[3], titles[4], summary[4])
+                news = ' Now for daily news, Article 1: {} , {}. Article 2: {} , {}. Article 3: {} , {}. Article 4: {} , {}. Article 5: {} , {}. '.format(titles[0], summary[0], titles[1], summary[1], titles[2], summary[2], titles[3], summary[3], titles[4], summary[4])
                 news = news.encode('ascii', 'ignore').decode('ascii')
             
         currentDay = time.strftime("%A")
@@ -408,8 +450,12 @@ class ClockLabel(Label):
         currentMonth = time.strftime("%B")
         currentYear = time.strftime("%Y")
         time = 'Today is {}, {} {} {},'.format(currentDay, currentMonth, currentDayNum, currentYear)
+        cmd = "pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(time, weather, news)
+        sub = subprocess.Popen(cmd, stdout = subprocess.PIPE, shell = True, preexec_fn=os.setsid)
+        global alarm_pid
+        alarm_pid = os.getpgid(sub.pid)
         
-        os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(time, weather, news))
+        #os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(time, weather, news))
 
         
 #class to dim and brighten the backlight of the RPI when the user reports they are going to sleep/waking up         
@@ -478,6 +524,18 @@ class SleepButton(Button):
                     store.put(day, total_time = total_time, isWeekend = weekend)
                 
             self.text = "Good Night"
+
+class AlarmStopButton(Button):
+    def __init__(self, **kwargs):
+        super(AlarmStopButton, self).__init__(**kwargs)
+        self.text = "Stop Alarm"
+
+    def on_press(self):
+        global alarm_pid
+
+        if(alarm_pid != 999999999999):
+            os.killpg(alarm_pid, signal.SIGTERM)
+            alarm_pid = 999999999999
             
 #main screen of the app for use with screenmanager
 class ClockScreen(Screen):
