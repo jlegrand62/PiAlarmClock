@@ -47,10 +47,10 @@ smart_sleep_count = 0
 alarm_pid = 999999999999
 sub_process = 0
 weather_zip = '06106'
-paper_url = 'http://npr.org/sections/technology'
 paper_name = 'NPR'
-paper = newspaper.build(paper_url , memoize_articles=False)
-
+npr_paper = newspaper.build('http://npr.org/sections/technology' , memoize_articles=False)
+bbc_paper = newspaper.build('http://bbc.com/news/technology' , memoize_articles=False)
+wsj_paper = newspaper.build('http://wsj.com/news/technology' , memoize_articles=False)
 
 #status labels for Settings page which update based on state of their corresponding checkbox
 class WeatherStatusLabel(Label):
@@ -169,12 +169,13 @@ class NewsArticleNumLabel(Label):
     def __init__(self, **kwargs):
         super(NewsArticleNumLabel, self).__init__(**kwargs)
         global news_article_num
-        self.text = "{}".format(news_article_num)
+        self.markup = True
+        self.text = "[color=000000]{}[/color]".format(news_article_num)
         Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
         global news_article_num
-        self.text = "{}".format(news_article_num)
+        self.text = "[color=000000]{}[/color]".format(news_article_num)
 
 class NewsSourceButton(Button):
     def __init__(self, **kwargs):
@@ -182,34 +183,28 @@ class NewsSourceButton(Button):
         self.text = "News Source:"
 
     def updateNewsSource(self):
-        global paper_url
         global paper_name
         global paper
-        if(paper_url == 'http://npr.org/sections/technology'):
-            paper_url = 'http://bbc.com/news/technology'
+        if(paper_name == 'NPR'):
             paper_name = 'BBC'
-            paper = newspaper.build(paper_url , memoize_articles=False)
 
-        elif(paper_url == 'http://bbc.com/news/technology'):
-            paper_url = 'http://wsj.com/news/technology'
+        elif(paper_name == 'BBC'):
             paper_name = 'WSJ'
-            paper = newspaper.build(paper_url , memoize_articles=False)
 
-        elif(paper_url == 'http://wsj.com/news/technology'):
-            paper_url = 'http://npr.org/sections/technology'
+        elif(paper_name == 'WSJ'):
             paper_name = 'NPR'
-            paper = newspaper.build(paper_url , memoize_articles=False)
 
 class NewsSourceLabel(Label):
     def __init__(self, **kwargs):
         super(NewsSourceLabel, self).__init__(**kwargs)
         global paper_name
+        self.markup = True
         self.text = "{}".format(paper_name)
         Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
         global paper_name
-        self.text = "{}".format(paper_name)
+        self.text = "[color=000000]{}[/color]".format(paper_name)
 
 #alarm picker button class and methods
 class SetAlarmButton(Button):
@@ -318,15 +313,22 @@ class PopupDismissButton(Button):
 class ClockLabel(Label):
     def __init__(self, **kwargs):
         super(ClockLabel, self).__init__(**kwargs)
-        self.text = str(time.asctime())
+        self.valign = 'middle'
+        self.halign = 'center'
+        time_string = time.strftime("%H:%M")
+        date_string = time.strftime("%A, %b %d")
+        self.markup = True
+        self.text ="[size=100]{}[/size] \n[size=25]{}[/size]".format(time_string, date_string)
         #schedule text update and alarm checking functions
         Clock.schedule_interval(self.update, 1)
         Clock.schedule_interval(self.checkAlarm, 1)
     
     #updates the label's text to properly reflect the current time
     def update(self, *args):
-        self.text = str(time.asctime())
-    
+        time_string = time.strftime("%H:%M")
+        date_string = time.strftime("%A, %b %d")        
+        self.text ="[color=#000000][size=100]{}[/size] \n[size=25]{}[/size][/color]".format(time_string, date_string)
+      
     #checks the alarm set by the user and calls the alarm function if the alarm occurs
     def checkAlarm(self, *args):
         global alarm_hour
@@ -387,8 +389,16 @@ class ClockLabel(Label):
 
         if(news_stat == 1):
             global news_article_num
+            global paper_name
+            
+            if (paper_name == 'NPR'):
+                paper = npr_paper
+            if(paper_name == 'BBC'):
+                paper = bbc_paper
+            if (paper_name == 'WSJ'):
+                paper = wsj_paper
+                
             if(news_article_num == 1):
-                global paper
                 first_article = paper.articles[2]
                 first_article.download()
                 first_article.parse()
@@ -401,8 +411,7 @@ class ClockLabel(Label):
                 news = ' Now for daily news, Article 1: {} , {}'.format(title, escaped_summary)
                 news = news.encode('ascii', 'ignore').decode('ascii')
 
-            if(news_article_num == 3):
-                global paper
+            if(news_article_num == 3):   
                 articles = []
                 titles = []
                 summary = []

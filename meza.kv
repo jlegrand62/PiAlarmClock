@@ -7,7 +7,6 @@ ScreenHandler:
     SettingsScreen:
     
 <ClockLabel>:
-    font_size: 50
 
 <SetAlarmButton>:
     font_size: 16
@@ -59,20 +58,20 @@ ScreenHandler:
 
         SetAlarmButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*.68
+            pos: root.width * 0.38, root.height*.74
             on_press: self.alarmPopup()
 
         ClockLabel:
-            size_hint: 0.3, 0.19
+            size_hint: 0.28, 0.19
             pos: root.width*0.35,root.height*0.5
 
         SleepButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*0.28
+            pos: root.width * 0.23, root.height*0.15
 
         AlarmStopButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*0.10
+            pos: root.width * 0.53, root.height*0.15
             font_size: 30
 
 <SpecialFloatLayout>
@@ -85,6 +84,12 @@ ScreenHandler:
 
 <SettingsScreen>:
     name: "settings"
+
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "./images/settings_background.png"
     
     SpecialFloatLayout:
         Button:
