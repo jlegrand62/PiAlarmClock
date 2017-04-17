@@ -21,6 +21,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.graphics.vertex_instructions import RoundedRectangle
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.dropdown import DropDown
 from kivy.uix.textinput import TextInput
@@ -46,7 +47,7 @@ smart_sleep_count = 0
 alarm_pid = 999999999999
 sub_process = 0
 weather_zip = '06106'
-paper_url = 'http://npr.org'
+paper_url = 'http://npr.org/sections/technology'
 paper_name = 'NPR'
 paper = newspaper.build(paper_url , memoize_articles=False)
 
@@ -174,18 +175,6 @@ class NewsArticleNumLabel(Label):
     def update(self, *args):
         global news_article_num
         self.text = "{}".format(news_article_num)
-        
-
-class WeatherLocInput(TextInput):
-    def __init__(self, **kwargs):
-        super(WeatherLocInput, self).__init__(**kwargs)
-        
-        self.multiline = False
-
-    def updateLoc(self):
-        global weather_zip
-        store.put('weather_zip', zip_cope = self.text)
-        weather_zip = self.text
 
 class NewsSourceButton(Button):
     def __init__(self, **kwargs):
@@ -196,7 +185,7 @@ class NewsSourceButton(Button):
         global paper_url
         global paper_name
         global paper
-        if(paper_url == 'http://npr.org'):
+        if(paper_url == 'http://npr.org/sections/technology'):
             paper_url = 'http://bbc.com/news/technology'
             paper_name = 'BBC'
             paper = newspaper.build(paper_url , memoize_articles=False)
@@ -207,7 +196,7 @@ class NewsSourceButton(Button):
             paper = newspaper.build(paper_url , memoize_articles=False)
 
         elif(paper_url == 'http://wsj.com/news/technology'):
-            paper_url = 'http://npr.org'
+            paper_url = 'http://npr.org/sections/technology'
             paper_name = 'NPR'
             paper = newspaper.build(paper_url , memoize_articles=False)
 
@@ -231,7 +220,7 @@ class SetAlarmButton(Button):
         Clock.schedule_interval(self.update, 1)
 
     def alarmPopup(self):
-        #content of the popup to be sotred in this float layout
+        #content of the popup to be sorted in this float layout
         box = FloatLayout()
 
         #hour selector
@@ -399,8 +388,8 @@ class ClockLabel(Label):
         if(news_stat == 1):
             global news_article_num
             if(news_article_num == 1):
-                global cnn_paper
-                first_article = cnn_paper.articles[2]
+                global paper
+                first_article = paper.articles[2]
                 first_article.download()
                 first_article.parse()
                 first_article.nlp()
@@ -413,12 +402,12 @@ class ClockLabel(Label):
                 news = news.encode('ascii', 'ignore').decode('ascii')
 
             if(news_article_num == 3):
-                global cnn_paper
+                global paper
                 articles = []
                 titles = []
                 summary = []
                 for i in range(3):
-                    articles.append(cnn_paper.articles[i+2])
+                    articles.append(paper.articles[i+2])
                     articles[i].download()
                     articles[i].parse()
                     articles[i].nlp()
@@ -430,12 +419,12 @@ class ClockLabel(Label):
                 
 
             if(news_article_num == 5):
-                global cnn_paper
+                global paper
                 articles = []
                 titles = []
                 summary = []
                 for i in range(5):
-                    articles.append(cnn_paper.articles[i+2])
+                    articles.append(paper.articles[i+2])
                     articles[i].download()
                     articles[i].parse()
                     articles[i].nlp()
@@ -529,6 +518,7 @@ class AlarmStopButton(Button):
     def __init__(self, **kwargs):
         super(AlarmStopButton, self).__init__(**kwargs)
         self.text = "Stop Alarm"
+    
 
     def on_press(self):
         global alarm_pid
@@ -587,13 +577,13 @@ class MezaApp(App):
             global news_article_num
             news_article_num = store.get('news_article_num')['status']
             
-        app = Builder.load_file("meza.kv")
+        #app = Builder.load_file("meza.kv")
         crudeclock = ClockLabel()
         alarmButton = SetAlarmButton()
         sleeper = SleepButton()
         weatherStat = WeatherStatusLabel()
         
-        return app
+        #return app
 
 if __name__ == '__main__':
     MezaApp().run()

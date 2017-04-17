@@ -13,7 +13,7 @@ ScreenHandler:
     font_size: 16
 
 <SleepButton>:
-    font_size: 25
+    font_size: 30
 
 <WeatherStatusLabel>:
     font_size: 20
@@ -26,22 +26,36 @@ ScreenHandler:
 
 <ClockScreen>:
     name: "clock"
-    
+
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "./images/background.png"
 
     FloatLayout:
         Button:
-            size_hint: 0.2, 0.12
-            text: "Settings"
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
             on_release:
                 root.manager.transition.direction = 'left'
                 root.manager.current = "settings"
             pos_hint: {"right":1, "top":1}
+            Image:
+                source: "./images/settingicon.png"
+                center_x: self.parent.center_x + 25
+                center_y: self.parent.center_y 
+                
 
         Button:
-            size_hint: 0.2, 0.12
-            text: "Exit"
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
             on_release: app.stop()
             pos_hint: {"left":1, "top":1}
+            Image:
+                source: "./images/powericon.png"
+                center_x: self.parent.center_x - 25
+                center_y: self.parent.center_y 
 
         SetAlarmButton:
             size_hint: 0.22, 0.17
@@ -59,7 +73,7 @@ ScreenHandler:
         AlarmStopButton:
             size_hint: 0.22, 0.17
             pos: root.width * 0.38, root.height*0.10
-            font_size: 35
+            font_size: 30
 
 <SpecialFloatLayout>
 
@@ -74,12 +88,16 @@ ScreenHandler:
     
     SpecialFloatLayout:
         Button:
-            size_hint: 0.2, 0.12
-            text: "Back"
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
             on_release:
                 root.manager.transition.direction = 'right'
                 root.manager.current = "clock"
             pos_hint: {"left":1, "top":1}
+            Image:
+                source: "./images/clockicon.png"
+                center_x: self.parent.center_x - 25
+                center_y: self.parent.center_y 
 
         WeatherStatusLabel:
             size_hint: 0.1, 0.1
@@ -108,12 +126,6 @@ ScreenHandler:
             size_hint: 0.15, 0.15
             pos: root.width * 0.6, root.height * 0.3
             on_press: self.updateNews()
-
-        WeatherLocInput:
-            size_hint: 0.15, 0.05
-            pos: root.width * 0.4, root.height * 0.5
-            on_text_validate: self.updateLoc()
-            on_parent: self.focus = True
 
         NewsArticleNum:
             size_hint: 0.15, 0.15
