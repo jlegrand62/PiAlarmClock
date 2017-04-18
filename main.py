@@ -13,6 +13,9 @@ from kivy.vector import Vector
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.image import Image
+from kivy.uix.image import AsyncImage
 import time
 from time import gmtime, strftime
 import datetime
@@ -214,7 +217,10 @@ class SetAlarmButton(Button):
         #schedule this button to continually look to update it's text to reflect the current alarm
         Clock.schedule_interval(self.update, 1)
 
-    def alarmPopup(self):
+    def on_press(self):
+        Clock.schedule_once(self.alarmPopup)
+
+    def alarmPopup(self, *args):
         #content of the popup to be sorted in this float layout
         box = FloatLayout()
 
@@ -261,7 +267,7 @@ class SetAlarmButton(Button):
         box.add_widget(dismissButton)
         
         currentDay = time.strftime("%A")
-        alarmPopup = Popup(title='Set Your Alarm for {}:'.format(currentDay), content=box, size_hint=(.9, .9))
+        alarmPopup = Popup(title='Set Your Alarm for {}:'.format(currentDay), content=box, size_hint=(1, 1))
         dismissButton.bind(on_press=partial(dismissButton.dismissPopup, alarmPopup, hourbutton, minutebutton))
         alarmPopup.open()
 
@@ -269,6 +275,8 @@ class SetAlarmButton(Button):
         global alarm_hour
         global alarm_minute
         currentDay = time.strftime("%A")
+        self.valign = 'middle'
+        self.halign = 'center'
         
         if store.exists(currentDay):
             alarm_hour = store.get(currentDay)['alarm_hour']
@@ -281,13 +289,13 @@ class SetAlarmButton(Button):
         #text formatting to properly display the current alarm
         else:
             if(alarm_hour < 10 and alarm_minute < 10):
-                self.text = "             Set Alarm\n Alarm is Currently 0{}:0{}".format(alarm_hour, alarm_minute)
+                self.text = "Set Alarm\n Currently 0{}:0{}".format(alarm_hour, alarm_minute)
             elif(alarm_minute < 10):
-                self.text = "             Set Alarm\n Alarm is Currently {}:0{}".format(alarm_hour, alarm_minute)
+                self.text = "Set Alarm\n Currently {}:0{}".format(alarm_hour, alarm_minute)
             elif(alarm_hour < 10):
-                self.text = "             Set Alarm\n Alarm is Currently 0{}:{}".format(alarm_hour, alarm_minute)
+                self.text = "Set Alarm\n Currently 0{}:{}".format(alarm_hour, alarm_minute)
             else:
-                self.text = "             Set Alarm\n Alarm is Currently {}:{}".format(alarm_hour, alarm_minute)
+                self.text = "Set Alarm\n Currently {}:{}".format(alarm_hour, alarm_minute)
 
 #special button added to the popup to ensure user selects and alarm and then saves it 
 class PopupDismissButton(Button):
@@ -564,6 +572,7 @@ class SettingsScreen(Screen):
 
 #screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
+    background_image = ObjectProperty(AsyncImage(source='./images/background.jpeg'))
     pass
 
 #main loop which runs the app and populates the UI

@@ -5,14 +5,21 @@
 ScreenHandler:
     ClockScreen:
     SettingsScreen:
+
+<ScreenHandler>:
+    canvas.before:
+        BorderImage:
+            texture: self.background_image.texture
+            pos: self.pos
+            size: self.size
     
 <ClockLabel>:
 
 <SetAlarmButton>:
-    font_size: 16
+    font_size: 22
 
 <SleepButton>:
-    font_size: 30
+    font_size: 25
 
 <WeatherStatusLabel>:
     font_size: 20
@@ -26,13 +33,8 @@ ScreenHandler:
 <ClockScreen>:
     name: "clock"
 
-    canvas.before:
-        Rectangle:
-            pos: self.pos
-            size: self.size
-            source: "./images/background.png"
-
     FloatLayout:
+	
         Button:
             background_color: 0, 0, 0, 0
             size_hint: 0.2, 0.23
@@ -57,22 +59,27 @@ ScreenHandler:
                 center_y: self.parent.center_y 
 
         SetAlarmButton:
-            size_hint: 0.22, 0.17
-            pos: root.width * 0.38, root.height*.74
-            on_press: self.alarmPopup()
+            size_hint: 0.25, 0.22
+            pos: root.width * 0.365, root.height*.73
+            background_normal: "./images/button.png"
+            background_down: "./images/button_2.png"
 
         ClockLabel:
             size_hint: 0.28, 0.19
-            pos: root.width*0.35,root.height*0.5
+            pos: root.width*0.35,root.height*0.45
 
         SleepButton:
             size_hint: 0.22, 0.17
             pos: root.width * 0.23, root.height*0.15
+            background_normal: "./images/button.png"
+            background_down: "./images/button_2.png"
 
         AlarmStopButton:
             size_hint: 0.22, 0.17
             pos: root.width * 0.53, root.height*0.15
-            font_size: 30
+            font_size: 25
+            background_normal: "./images/button.png"
+            background_down: "./images/button_2.png"
 
 <SpecialFloatLayout>
 
@@ -106,36 +113,45 @@ ScreenHandler:
 
         WeatherStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.22, root.height * 0.06
+            pos: root.width * 0.22, root.height * 0.14
             id: wl
 
         SmartSleepStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.42, root.height * 0.06
+            pos: root.width * 0.42, root.height * 0.14
 
         NewsStatusLabel:
             size_hint: 0.1, 0.1
-            pos: root.width * 0.62, root.height * 0.06
+            pos: root.width * 0.62, root.height * 0.14
 
         WeatherStatButton:
             size_hint: 0.15, 0.15
             pos: root.width * 0.2, root.height * 0.3
             on_press: self.updateWeather()
+            background_normal: "./images/settings_1.png"
+            background_down: "./images/seetings_2.png"
 
         SmartSleepStatButton:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.3
             on_press: self.updateSmartSleep()
+            background_normal: "./images/settings_1.png"
+            background_down: "./images/settings_2.png"
 
         NewsStatButton:
             size_hint: 0.15, 0.15
             pos: root.width * 0.6, root.height * 0.3
             on_press: self.updateNews()
+            background_normal: "./images/settings_1.png"
+            background_down: "./images/settings_2.png"
 
         NewsArticleNum:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.8
             on_press: self.updateArticleNum()
+            background_normal: "./images/settings_1.png"
+            background_down: "./images/settings_2.png"
+            
 
         NewsArticleNumLabel:
             size_hint: 0.15, 0.15
@@ -145,6 +161,8 @@ ScreenHandler:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.6
             on_press: self.updateNewsSource()
+            background_normal: "./images/settings_1.png"
+            background_down: "./images/settings_2.png"
 
         NewsSourceLabel:
             size_hint: 0.15, 0.15
