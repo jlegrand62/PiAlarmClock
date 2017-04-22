@@ -7,20 +7,8 @@ ScreenHandler:
     SettingsScreen:
 
 <ScreenHandler>:
-    canvas.before:
-        BorderImage:
-            texture: self.background_image.texture
-            pos: self.pos
-            size: self.size
     
-<ClockLabel>:
-
-<SetAlarmButton>:
-    font_size: 22
-
-<SleepButton>:
-    font_size: 25
-
+    
 <WeatherStatusLabel>:
     font_size: 20
 
@@ -33,8 +21,16 @@ ScreenHandler:
 <ClockScreen>:
     name: "clock"
 
+    canvas:
+        Color:
+            rgb: 0.0390625, 0.09375, 0.17578125
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "./images/settings_background.png"
+
     FloatLayout:
-	
+            
         Button:
             background_color: 0, 0, 0, 0
             size_hint: 0.2, 0.23
@@ -59,7 +55,7 @@ ScreenHandler:
                 center_y: self.parent.center_y 
 
         SetAlarmButton:
-            size_hint: 0.25, 0.22
+            size_hint: 0.25, 0.20
             pos: root.width * 0.365, root.height*.73
             background_normal: "./images/button.png"
             background_down: "./images/button_2.png"
@@ -70,13 +66,13 @@ ScreenHandler:
 
         SleepButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.23, root.height*0.15
+            pos: root.width * 0.21, root.height*0.12
             background_normal: "./images/button.png"
             background_down: "./images/button_2.png"
 
         AlarmStopButton:
             size_hint: 0.22, 0.17
-            pos: root.width * 0.53, root.height*0.15
+            pos: root.width * 0.55, root.height*0.12
             font_size: 25
             background_normal: "./images/button.png"
             background_down: "./images/button_2.png"
@@ -172,3 +168,11 @@ ScreenHandler:
 
            
 		
+
+<ClockLabel>:
+
+<SetAlarmButton>:
+    font_size: 22
+
+<SleepButton>:
+    font_size: 25

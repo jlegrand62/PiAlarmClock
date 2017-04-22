@@ -33,6 +33,7 @@ from functools import partial
 import re
 import newspaper
 from newspaper import Article, Source, Config
+from time import sleep
 
 
 kivy.require("1.9.1")
@@ -209,6 +210,26 @@ class NewsSourceLabel(Label):
         global paper_name
         self.text = "[color=000000]{}[/color]".format(paper_name)
 
+#special button added to the popup to ensure user selects and alarm and then saves it 
+class PopupDismissButton(Button):
+    def __init__(self, **kwargs):
+        super(PopupDismissButton, self).__init__(**kwargs)
+        self.text = "Set Alarm"
+        self.size_hint=(.2,.2);
+        self.pos_hint={'x':.4, 'y':.2}
+
+    def dismissPopup(self, instance, button1, button2, button3):
+        global alarm_hour
+        global alarm_minute
+
+        if(button1.text != "Select Hour" and button2.text != "Select Minute"):
+            alarm_hour = int(button1.text)
+            alarm_minute = int(button2.text)
+            currentDay = time.strftime("%A")
+            store.put(currentDay, alarm_hour = alarm_hour, alarm_minute = alarm_minute)
+            
+        instance.dismiss()
+
 #alarm picker button class and methods
 class SetAlarmButton(Button):
     def __init__(self, **kwargs):
@@ -267,7 +288,7 @@ class SetAlarmButton(Button):
         box.add_widget(dismissButton)
         
         currentDay = time.strftime("%A")
-        alarmPopup = Popup(title='Set Your Alarm for {}:'.format(currentDay), content=box, size_hint=(1, 1))
+        alarmPopup = Popup(title='Set Your Alarm for {}:'.format(currentDay), content=box, size_hint=(.8, .8))
         dismissButton.bind(on_press=partial(dismissButton.dismissPopup, alarmPopup, hourbutton, minutebutton))
         alarmPopup.open()
 
@@ -284,7 +305,7 @@ class SetAlarmButton(Button):
 
         #default state of alarm button before any alarms are set
         if(alarm_hour == 0 and alarm_minute == 0):
-            self.text = "    Set Alarm\n Alarm is Currently Not Set".format(alarm_hour, alarm_minute)
+            self.text = "    Set Alarm\n Alarm Not Set".format(alarm_hour, alarm_minute)
 
         #text formatting to properly display the current alarm
         else:
@@ -296,26 +317,6 @@ class SetAlarmButton(Button):
                 self.text = "Set Alarm\n Currently 0{}:{}".format(alarm_hour, alarm_minute)
             else:
                 self.text = "Set Alarm\n Currently {}:{}".format(alarm_hour, alarm_minute)
-
-#special button added to the popup to ensure user selects and alarm and then saves it 
-class PopupDismissButton(Button):
-    def __init__(self, **kwargs):
-        super(PopupDismissButton, self).__init__(**kwargs)
-        self.text = "Set Alarm"
-        self.size_hint=(.2,.2);
-        self.pos_hint={'x':.4, 'y':.2}
-
-    def dismissPopup(self, instance, button1, button2, button3):
-        global alarm_hour
-        global alarm_minute
-
-        if(button1.text != "Select Hour" and button2.text != "Select Minute"):
-            alarm_hour = int(button1.text)
-            alarm_minute = int(button2.text)
-            currentDay = time.strftime("%A")
-            store.put(currentDay, alarm_hour = alarm_hour, alarm_minute = alarm_minute)
-            
-            instance.dismiss()
             
 #self-updating clock label used on the home screen to tell time and check the user-set alarms
 class ClockLabel(Label):
@@ -335,7 +336,7 @@ class ClockLabel(Label):
     def update(self, *args):
         time_string = time.strftime("%H:%M")
         date_string = time.strftime("%A, %b %d")        
-        self.text ="[color=#000000][size=100]{}[/size] \n[size=25]{}[/size][/color]".format(time_string, date_string)
+        self.text ="[color=#8ac640][size=100]{}[/size] \n[size=25]{}[/size][/color]".format(time_string, date_string)
       
     #checks the alarm set by the user and calls the alarm function if the alarm occurs
     def checkAlarm(self, *args):
@@ -349,7 +350,7 @@ class ClockLabel(Label):
         #logic to ensure alarm function only fires once when it is the alarm time
         if(wait_next_minute!=0 and local_minute!=alarm_minute):
             wait_next_minute = 0
-        elif(local_minute == alarm_minute and wait_next_minute == 0):
+        elif((local_hour == alarm_hour and local_minute == alarm_minute) and wait_next_minute == 0):
             self.alarm_func()
             wait_next_minute = 1
     #function called when the alarm fires, will execute different commands based on user settings
@@ -572,7 +573,6 @@ class SettingsScreen(Screen):
 
 #screenmanager to allow for dynamic transitions between screens of the system
 class ScreenHandler(ScreenManager):
-    background_image = ObjectProperty(AsyncImage(source='./images/background.jpeg'))
     pass
 
 #main loop which runs the app and populates the UI
