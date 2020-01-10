@@ -1,6 +1,5 @@
 #!/home/jonathan/venv/alarmclock/bin/python
 
-import sys
 import kivy
 import pyowm
 from kivy.app import App
@@ -8,8 +7,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 import newspaper
-
-sys.path.extend(['/home/jonathan/Projects/PiAlarmClock/'])
 
 from PiAlarmClock.components.buttons import SetAlarmButton, SleepButton
 from PiAlarmClock.components.clock import ClockLabel
