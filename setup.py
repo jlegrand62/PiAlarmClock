@@ -38,7 +38,6 @@ setup_kwds = dict(
         'src/main.py'
     ],
     keywords='',
-
     test_suite='nose.collector',
     project_urls={
         'Documentation': about['__uri__'],
