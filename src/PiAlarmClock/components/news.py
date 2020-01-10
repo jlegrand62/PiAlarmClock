@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-from PiAlarmClock.main import STORE
+from PiAlarmClock.main import cfg.STORE
 
 
 class NewsStatButton(Button):
@@ -10,18 +10,16 @@ class NewsStatButton(Button):
         super(NewsStatButton, self).__init__(**kwargs)
         self.text = "News Module"
 
-        if STORE.exists('news_stat'):
-            global weather_stat
-            weather_stat = STORE.get('news_stat')['status']
+        if cfg.STORE.exists('news_stat'):
+            cfg.WEATHER_STAT = cfg.STORE.get('news_stat')['status']
 
     def updateNews(self):
-        global news_stat
-        if news_stat == 0:
-            STORE.put('news_stat', status=1)
-            news_stat = 1
+        if cfg.NEWS_STAT == 0:
+            cfg.STORE.put('news_stat', status=1)
+            cfg.NEWS_STAT = 1
         else:
-            STORE.put('news_stat', status=0)
-            news_stat = 0
+            cfg.STORE.put('news_stat', status=0)
+            cfg.NEWS_STAT = 0
 
 
 class NewsArticleNum(Button):
@@ -30,18 +28,17 @@ class NewsArticleNum(Button):
         self.text = "News Articles:"
 
     def updateArticleNum(self):
-        global news_article_num
-        if news_article_num == 1:
-            STORE.put('news_article_num', status=3)
-            news_article_num = 3
+        if cfg.NEWS_ARTICLE_NUM == 1:
+            cfg.STORE.put('news_article_num', status=3)
+            cfg.NEWS_ARTICLE_NUM = 3
 
-        elif news_article_num == 3:
-            STORE.put('news_article_num', status=5)
-            news_article_num = 5
+        elif cfg.NEWS_ARTICLE_NUM == 3:
+            cfg.STORE.put('news_article_num', status=5)
+            cfg.NEWS_ARTICLE_NUM = 5
 
-        elif news_article_num == 5:
-            STORE.put('news_article_num', status=1)
-            news_article_num = 1
+        elif cfg.NEWS_ARTICLE_NUM == 5:
+            cfg.STORE.put('news_article_num', status=1)
+            cfg.NEWS_ARTICLE_NUM = 1
 
 
 class NewsStatusLabel(Label):
@@ -52,8 +49,7 @@ class NewsStatusLabel(Label):
         Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
-        global news_stat
-        if news_stat == 0:
+        if cfg.NEWS_STAT == 0:
             self.text = "[color=f44253]Disabled[/color]"
         else:
             self.text = "[color=42f445]Enabled[/color]"
@@ -62,14 +58,12 @@ class NewsStatusLabel(Label):
 class NewsArticleNumLabel(Label):
     def __init__(self, **kwargs):
         super(NewsArticleNumLabel, self).__init__(**kwargs)
-        global news_article_num
         self.markup = True
-        self.text = "[color=000000]{}[/color]".format(news_article_num)
+        self.text = "[color=000000]{}[/color]".format(cfg.NEWS_ARTICLE_NUM)
         Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
-        global news_article_num
-        self.text = "[color=000000]{}[/color]".format(news_article_num)
+        self.text = "[color=000000]{}[/color]".format(cfg.NEWS_ARTICLE_NUM)
 
 
 class NewsSourceButton(Button):
@@ -78,25 +72,22 @@ class NewsSourceButton(Button):
         self.text = "News Source:"
 
     def updateNewsSource(self):
-        global paper_name
-        if paper_name == 'NPR':
-            paper_name = 'BBC'
+        if cfg.PAPER_NAME == 'NPR':
+            cfg.PAPER_NAME = 'BBC'
 
-        elif paper_name == 'BBC':
-            paper_name = 'WSJ'
+        elif cfg.PAPER_NAME == 'BBC':
+            cfg.PAPER_NAME = 'WSJ'
 
-        elif paper_name == 'WSJ':
-            paper_name = 'NPR'
+        elif cfg.PAPER_NAME == 'WSJ':
+            cfg.PAPER_NAME = 'NPR'
 
 
 class NewsSourceLabel(Label):
     def __init__(self, **kwargs):
         super(NewsSourceLabel, self).__init__(**kwargs)
-        global paper_name
         self.markup = True
-        self.text = "{}".format(paper_name)
+        self.text = "{}".format(cfg.PAPER_NAME)
         Clock.schedule_interval(self.update, 0.2)
 
     def update(self, *args):
-        global paper_name
-        self.text = "[color=000000]{}[/color]".format(paper_name)
+        self.text = "[color=000000]{}[/color]".format(cfg.PAPER_NAME)

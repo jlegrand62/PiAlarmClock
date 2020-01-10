@@ -16,11 +16,11 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 
-from PiAlarmClock.main import STORE
+import PiAlarmClock.config.config as cfg
 
 
 class PopupDismissButton(Button):
-    #special button added to the popup to ensure user selects and alarm and then saves it
+    # special button added to the popup to ensure user selects and alarm and then saves it
     def __init__(self, **kwargs):
         super(PopupDismissButton, self).__init__(**kwargs)
         self.text = "Set Alarm"
@@ -28,14 +28,11 @@ class PopupDismissButton(Button):
         self.pos_hint = {'x': .4, 'y': .2}
 
     def dismissPopup(self, instance, button1, button2, button3):
-        global alarm_hour
-        global alarm_minute
-
         if button1.text != "Select Hour" and button2.text != "Select Minute":
-            alarm_hour = int(button1.text)
-            alarm_minute = int(button2.text)
+            cfg.ALARM_HOUR = int(button1.text)
+            cfg.ALARM_MINUTE = int(button2.text)
             currentDay = time.strftime("%A")
-            STORE.put(currentDay, alarm_hour=alarm_hour, alarm_minute=alarm_minute)
+            cfg.STORE.put(currentDay, alarm_hour=cfg.ALARM_HOUR, alarm_minute=cfg.ALARM_MINUTE)
 
         instance.dismiss()
 
@@ -102,30 +99,28 @@ class SetAlarmButton(Button):
         alarmPopup.open()
 
     def update(self, *args):
-        global alarm_hour
-        global alarm_minute
         currentDay = time.strftime("%A")
         self.valign = 'middle'
         self.halign = 'center'
 
-        if STORE.exists(currentDay):
-            alarm_hour = STORE.get(currentDay)['alarm_hour']
-            alarm_minute = STORE.get(currentDay)['alarm_minute']
+        if cfg.STORE.exists(currentDay):
+            cfg.ALARM_HOUR = cfg.STORE.get(currentDay)['alarm_hour']
+            cfg.ALARM_MINUTE = cfg.STORE.get(currentDay)['alarm_minute']
 
         # default state of alarm button before any alarms are set
-        if alarm_hour == 0 and alarm_minute == 0:
-            self.text = "    Set Alarm\n Alarm Not Set".format(alarm_hour, alarm_minute)
+        if cfg.ALARM_HOUR == 0 and cfg.ALARM_MINUTE == 0:
+            self.text = "    Set Alarm\n Alarm Not Set".format(cfg.ALARM_HOUR, cfg.ALARM_MINUTE)
 
         # text formatting to properly display the current alarm
         else:
-            if alarm_hour < 10 and alarm_minute < 10:
-                self.text = "Set Alarm\n Currently 0{}:0{}".format(alarm_hour, alarm_minute)
-            elif alarm_minute < 10:
-                self.text = "Set Alarm\n Currently {}:0{}".format(alarm_hour, alarm_minute)
-            elif alarm_hour < 10:
-                self.text = "Set Alarm\n Currently 0{}:{}".format(alarm_hour, alarm_minute)
+            if cfg.ALARM_HOUR < 10 and cfg.ALARM_MINUTE < 10:
+                self.text = "Set Alarm\n Currently 0{}:0{}".format(cfg.ALARM_HOUR, cfg.ALARM_MINUTE)
+            elif cfg.ALARM_MINUTE < 10:
+                self.text = "Set Alarm\n Currently {}:0{}".format(cfg.ALARM_HOUR, cfg.ALARM_MINUTE)
+            elif cfg.ALARM_HOUR < 10:
+                self.text = "Set Alarm\n Currently 0{}:{}".format(cfg.ALARM_HOUR, cfg.ALARM_MINUTE)
             else:
-                self.text = "Set Alarm\n Currently {}:{}".format(alarm_hour, alarm_minute)
+                self.text = "Set Alarm\n Currently {}:{}".format(cfg.ALARM_HOUR, cfg.ALARM_MINUTE)
 
 
 class SleepButton(Button):
@@ -140,23 +135,22 @@ class SleepButton(Button):
             self.text = "Good Morning"
         else:
             os.system("echo 255 > /sys/class/backlight/rpi_backlight/brightness")
-            global smart_sleep
-            if smart_sleep == 1:
-                if STORE.exists('smart_sleep_count'):
-                    smart_sleep_count = STORE.get('smart_sleep_count')['count']
+            if cfg.SMART_SLEEP == 1:
+                if cfg.STORE.exists('smart_sleep_count'):
+                    cfg.SMART_SLEEP_COUNT = cfg.STORE.get('smart_sleep_count')['count']
                 else:
-                    smart_sleep_count = 0
+                    cfg.SMART_SLEEP_COUNT = 0
 
-                if smart_sleep_count == 7:
-                    smart_sleep_count = 0
-                    STORE.put('smart_sleep_count', count=0)
-                    smart_sleep = 0
-                    STORE.put('smart_sleep', status=0)
+                if cfg.SMART_SLEEP_COUNT == 7:
+                    cfg.SMART_SLEEP_COUNT = 0
+                    cfg.STORE.put('smart_sleep_count', count=0)
+                    cfg.SMART_SLEEP = 0
+                    cfg.STORE.put('smart_sleep', status=0)
 
                     average = 0
                     for i in range(1, 8):
                         day = 'Day{}'.format(i)
-                        temp = STORE.get(day)['total_time']
+                        temp = cfg.STORE.get(day)['total_time']
                         average = average + temp
 
                     average = average / 7
@@ -166,29 +160,29 @@ class SleepButton(Button):
                         average = average - 60
                         counter = counter + 1
 
-                    STORE.put('Monday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Tuesday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Wednesday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Thursday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Friday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Saturday', alarm_hour=counter, alarm_minute=average)
-                    STORE.put('Sunday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Monday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Tuesday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Wednesday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Thursday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Friday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Saturday', alarm_hour=counter, alarm_minute=average)
+                    cfg.STORE.put('Sunday', alarm_hour=counter, alarm_minute=average)
 
                 else:
-                    smart_sleep_count = smart_sleep_count + 1
-                    STORE.put('smart_sleep_count', count=smart_sleep_count)
+                    cfg.SMART_SLEEP_COUNT = cfg.SMART_SLEEP_COUNT + 1
+                    cfg.STORE.put('smart_sleep_count', count=cfg.SMART_SLEEP_COUNT)
 
                     now = datetime.datetime.now()
                     wake_hour = int(now.hour)
                     wake_min = int(now.minute)
                     total_time = wake_hour * 60 + wake_min
-                    day = 'Day{}'.format(smart_sleep_count)
+                    day = 'Day{}'.format(cfg.SMART_SLEEP_COUNT)
                     currentDay = time.strftime("%A")
                     if currentDay == "Saturday" or currentDay == "Sunday":
                         weekend = 1
                     else:
                         weekend = 0
-                    STORE.put(day, total_time=total_time, isWeekend=weekend)
+                    cfg.STORE.put(day, total_time=total_time, isWeekend=weekend)
 
             self.text = "Good Night"
 
@@ -199,11 +193,9 @@ class AlarmStopButton(Button):
         self.text = "Stop Alarm"
 
     def on_press(self):
-        global alarm_pid
-
-        if alarm_pid != 999999999999:
-            os.killpg(alarm_pid, signal.SIGTERM)
-            alarm_pid = 999999999999
+        if cfg.ALARM_PID != 999999999999:
+            os.killpg(cfg.ALARM_PID, signal.SIGTERM)
+            cfg.ALARM_PID = 999999999999
 
 
 class SmartSleepStatButton(Button):
@@ -212,10 +204,9 @@ class SmartSleepStatButton(Button):
         self.text = "SmartSleep \n   Module"
 
     def updateSmartSleep(self):
-        global smart_sleep
-        if smart_sleep == 0:
-            STORE.put('smart_sleep', status=1)
-            smart_sleep = 1
+        if cfg.SMART_SLEEP == 0:
+            cfg.STORE.put('smart_sleep', status=1)
+            cfg.SMART_SLEEP = 1
         else:
-            STORE.put('smart_sleep', status=0)
-            smart_sleep = 0
+            cfg.STORE.put('smart_sleep', status=0)
+            cfg.SMART_SLEEP = 0

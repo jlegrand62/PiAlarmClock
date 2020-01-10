@@ -27,7 +27,7 @@ ScreenHandler:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: "./images/settings_background.png"
+            source: "images/settings_background.png"
 
     FloatLayout:
             
@@ -39,7 +39,7 @@ ScreenHandler:
                 root.manager.current = "settings"
             pos_hint: {"right":1, "top":1}
             Image:
-                source: "./images/settingicon.png"
+                source: "images/settingicon.png"
                 center_x: self.parent.center_x + 25
                 center_y: self.parent.center_y 
                 
@@ -50,15 +50,15 @@ ScreenHandler:
             on_release: app.stop()
             pos_hint: {"left":1, "top":1}
             Image:
-                source: "./images/powericon.png"
+                source: "images/powericon.png"
                 center_x: self.parent.center_x - 25
                 center_y: self.parent.center_y 
 
         SetAlarmButton:
             size_hint: 0.25, 0.20
             pos: root.width * 0.365, root.height*.73
-            background_normal: "./images/button.png"
-            background_down: "./images/button_2.png"
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
 
         ClockLabel:
             size_hint: 0.28, 0.19
@@ -67,15 +67,15 @@ ScreenHandler:
         SleepButton:
             size_hint: 0.22, 0.17
             pos: root.width * 0.21, root.height*0.12
-            background_normal: "./images/button.png"
-            background_down: "./images/button_2.png"
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
 
         AlarmStopButton:
             size_hint: 0.22, 0.17
             pos: root.width * 0.55, root.height*0.12
             font_size: 25
-            background_normal: "./images/button.png"
-            background_down: "./images/button_2.png"
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
 
 <SpecialFloatLayout>
 
@@ -92,7 +92,7 @@ ScreenHandler:
         Rectangle:
             pos: self.pos
             size: self.size
-            source: "./images/settings_background.png"
+            source: "images/settings_background.png"
     
     SpecialFloatLayout:
         Button:
@@ -103,7 +103,7 @@ ScreenHandler:
                 root.manager.current = "clock"
             pos_hint: {"left":1, "top":1}
             Image:
-                source: "./images/clockicon.png"
+                source: "images/clockicon.png"
                 center_x: self.parent.center_x - 25
                 center_y: self.parent.center_y 
 
@@ -124,29 +124,29 @@ ScreenHandler:
             size_hint: 0.15, 0.15
             pos: root.width * 0.2, root.height * 0.3
             on_press: self.updateWeather()
-            background_normal: "./images/settings_1.png"
-            background_down: "./images/seetings_2.png"
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
 
         SmartSleepStatButton:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.3
             on_press: self.updateSmartSleep()
-            background_normal: "./images/settings_1.png"
-            background_down: "./images/settings_2.png"
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
 
         NewsStatButton:
             size_hint: 0.15, 0.15
             pos: root.width * 0.6, root.height * 0.3
             on_press: self.updateNews()
-            background_normal: "./images/settings_1.png"
-            background_down: "./images/settings_2.png"
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
 
         NewsArticleNum:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.8
             on_press: self.updateArticleNum()
-            background_normal: "./images/settings_1.png"
-            background_down: "./images/settings_2.png"
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
             
 
         NewsArticleNumLabel:
@@ -157,17 +157,13 @@ ScreenHandler:
             size_hint: 0.15, 0.15
             pos: root.width * 0.4, root.height * 0.6
             on_press: self.updateNewsSource()
-            background_normal: "./images/settings_1.png"
-            background_down: "./images/settings_2.png"
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
 
         NewsSourceLabel:
             size_hint: 0.15, 0.15
             pos: root.width * 0.53, root.height * 0.6
-        
 
-
-           
-		
 
 <ClockLabel>:
 

@@ -9,8 +9,10 @@ from kivy.uix.screenmanager import Screen
 
 from PiAlarmClock.main import owm, npr_paper, bbc_paper, wsj_paper
 
+import PiAlarmClock.config.config as cfg
 
-#status labels for Settings page which update based on state of their corresponding checkbox
+
+# status labels for Settings page which update based on state of their corresponding checkbox
 class ClockLabel(Label):
     def __init__(self, **kwargs):
         super(ClockLabel, self).__init__(**kwargs)
@@ -32,30 +34,24 @@ class ClockLabel(Label):
 
     # checks the alarm set by the user and calls the alarm function if the alarm occurs
     def checkAlarm(self, *args):
-        global alarm_hour
-        global alarm_minute
         now = datetime.datetime.now()
         local_hour = int(now.hour)
         local_minute = int(now.minute)
-        global wait_next_minute
 
         # logic to ensure alarm function only fires once when it is the alarm time
-        if wait_next_minute != 0 and local_minute != alarm_minute:
-            wait_next_minute = 0
-        elif (local_hour == alarm_hour and local_minute == alarm_minute) and wait_next_minute == 0:
+        if cfg.WAIT_NEXT_MINUTE != 0 and local_minute != cfg.ALARM_MINUTE:
+            cfg.WAIT_NEXT_MINUTE = 0
+        elif (local_hour == cfg.ALARM_HOUR and local_minute == cfg.ALARM_MINUTE) and cfg.WAIT_NEXT_MINUTE == 0:
             self.alarm_func()
-            wait_next_minute = 1
+            cfg.WAIT_NEXT_MINUTE = 1
 
     # function called when the alarm fires, will execute different commands based on user settings
     def alarm_func(self, *args):
-        global smart_sleep
-        global weather_stat
-        global news_stat
         import time
         weather = ''
         news = ''
 
-        if weather_stat == 1:
+        if cfg.WEATHER_STAT == 1:
             observation = owm.weather_at_place('06106')
             w = observation.get_weather()
             status = w.get_status()
@@ -92,20 +88,17 @@ class ClockLabel(Label):
             weather += f" It is currently {temp_read} degrees Farenheit."
             weather += " {wind} {temp}"
 
-        if news_stat == 1:
-            global news_article_num
-            global paper_name
-
-            if paper_name == 'NPR':
+        if cfg.NEWS_STAT == 1:
+            if cfg.PAPER_NAME == 'NPR':
                 paper = npr_paper
-            elif paper_name == 'BBC':
+            elif cfg.PAPER_NAME == 'BBC':
                 paper = bbc_paper
-            elif paper_name == 'WSJ':
+            elif cfg.PAPER_NAME == 'WSJ':
                 paper = wsj_paper
             else:
-                raise ValueError(f"Unknown paper name: {paper_name}!")
+                raise ValueError(f"Unknown paper name: {cfg.PAPER_NAME}!")
 
-            if news_article_num == 1:
+            if cfg.NEWS_ARTICLE_NUM == 1:
                 first_article = paper.articles[2]
                 first_article.download()
                 first_article.parse()
@@ -118,7 +111,7 @@ class ClockLabel(Label):
                 news = ' Now for daily news, Article 1: {} , {}'.format(title, escaped_summary)
                 news = news.encode('ascii', 'ignore').decode('ascii')
 
-            if news_article_num == 3:
+            if cfg.NEWS_ARTICLE_NUM == 3:
                 articles = []
                 titles = []
                 summary = []
@@ -136,7 +129,7 @@ class ClockLabel(Label):
                                                                                                 'ignore').decode(
                     'ascii')
 
-            if news_article_num == 5:
+            if cfg.NEWS_ARTICLE_NUM == 5:
                 articles = []
                 titles = []
                 summary = []
@@ -158,20 +151,13 @@ class ClockLabel(Label):
         currentMonth = time.strftime("%B")
         currentYear = time.strftime("%Y")
         time = 'Today is {}, {} {} {},'.format(currentDay, currentMonth, currentDayNum, currentYear)
-        cmd = "pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(
-            time, weather, news)
-        sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
-        global alarm_pid
-        alarm_pid = os.getpgid(sub.pid)
         # cmd = "pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(
         #     time, weather, news)
         # sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
-        # global alarm_pid
-        # alarm_pid = os.getpgid(sub.pid)
+        # cfg.ALARM_PID = os.getpgid(sub.pid)
         cmd = "python /home/jonathan/Projects/alarmclock/PiAlarmClock/alarm.py"
         sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
-        global alarm_pid
-        alarm_pid = os.getpgid(sub.pid)
+        cfg.ALARM_PID = os.getpgid(sub.pid)
 
         # os.system("pico2wave -w alarm.wav \"Good Morning! This is your alarm clock speaking! Time to wake up! {} {} {}\" && aplay alarm.wav".format(time, weather, news))
 
