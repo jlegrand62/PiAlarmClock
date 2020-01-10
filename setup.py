@@ -39,7 +39,7 @@ setup_kwds = dict(
     entry_points={
     },
     scripts=[
-        'PiAlarmClock/src/PiAlarmClock/main.py'
+        'src/PiAlarmClock/main.py'
     ],
     keywords='',
 
