@@ -9,7 +9,7 @@ from os.path import dirname, abspath, join
 root_folder = abspath(dirname(__file__))
 # Load the package information, see 'PiAlarmClock/src/PiAlarmClock/__about__.py'
 about = {}
-with open(join(root_folder, "src", "PiAlarmClock", "__about__.py")) as fp:
+with open(join(root_folder, "src", "__about__.py")) as fp:
     exec(fp.read(), about)
 
 setup_kwds = dict(
