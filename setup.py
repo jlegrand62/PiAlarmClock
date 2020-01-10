@@ -9,7 +9,7 @@ from os.path import dirname, abspath, join
 root_folder = abspath(dirname(__file__))
 # Load the package information, see 'PiAlarmClock/src/PiAlarmClock/__about__.py'
 about = {}
-with open(join(root_folder, "__about__.py")) as fp:
+with open(join(root_folder, 'src', 'PiAlarmClock', "__about__.py")) as fp:
     exec(fp.read(), about)
 
 setup_kwds = dict(
@@ -20,7 +20,8 @@ setup_kwds = dict(
     author_email=about['__email__'],
     url=about['__uri__'],
     # license=about['__license__'],
-    packages=find_packages(),
+    packages=find_packages('src'),  # include all packages under src
+    package_dir={'':'src'},   # tell distutils packages are under src
     zip_safe=False,
     python_requires='>=3.6',
     setup_requires=[
@@ -50,8 +51,12 @@ setup_kwds = dict(
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3.7",
     ],
-    platforms=[
-        'Arm'
+    platform_system=[
+        'Linux'
+    ],
+    platform_machine=[
+        'armv6l',
+        'armv7l'
     ]
 )
 

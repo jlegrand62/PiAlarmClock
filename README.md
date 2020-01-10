@@ -15,7 +15,7 @@ python3 -m venv alarmclock --without-pip
 
 2. Activate the  `alarmclock` environment
 ```bash
-source alarmclock/bin/activate
+source ~/venv/alarmclock/bin/activate
 ```
 
 3. Install `pip`:
@@ -28,7 +28,7 @@ rm get-pip.py
 4. Restart the virtualenv:
 ```bash
 deactivate
-source alarmclock/bin/activate
+source ~/venv/alarmclock/bin/activate
 ```
 
 5. Test pip version:
@@ -54,7 +54,7 @@ git clone https://github.com/jlegrand62/PiAlarmClock.git
 
 ### Launch the app:
 ```bash
-source alarmclock/bin/activate
+source ~/venv/alarmclock/bin/activate
 python setup.py install
-python ~/Projects/Meza/main.py
+python ~/PiAlarmClock/Projects/main.py
 ```
