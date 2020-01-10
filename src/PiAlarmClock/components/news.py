@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-from main import store
+from PiAlarmClock.main import STORE
 
 
 class NewsStatButton(Button):
@@ -10,17 +10,17 @@ class NewsStatButton(Button):
         super(NewsStatButton, self).__init__(**kwargs)
         self.text = "News Module"
 
-        if store.exists('news_stat'):
+        if STORE.exists('news_stat'):
             global weather_stat
-            weather_stat = store.get('news_stat')['status']
+            weather_stat = STORE.get('news_stat')['status']
 
     def updateNews(self):
         global news_stat
         if news_stat == 0:
-            store.put('news_stat', status=1)
+            STORE.put('news_stat', status=1)
             news_stat = 1
         else:
-            store.put('news_stat', status=0)
+            STORE.put('news_stat', status=0)
             news_stat = 0
 
 
@@ -32,15 +32,15 @@ class NewsArticleNum(Button):
     def updateArticleNum(self):
         global news_article_num
         if news_article_num == 1:
-            store.put('news_article_num', status=3)
+            STORE.put('news_article_num', status=3)
             news_article_num = 3
 
         elif news_article_num == 3:
-            store.put('news_article_num', status=5)
+            STORE.put('news_article_num', status=5)
             news_article_num = 5
 
         elif news_article_num == 5:
-            store.put('news_article_num', status=1)
+            STORE.put('news_article_num', status=1)
             news_article_num = 1
 
 

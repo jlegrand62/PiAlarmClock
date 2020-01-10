@@ -16,7 +16,7 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 
-from main import STORE
+from PiAlarmClock.main import STORE
 
 
 class PopupDismissButton(Button):

@@ -11,9 +11,9 @@ import newspaper
 
 sys.path.extend(['/home/jonathan/Projects/PiAlarmClock/'])
 
-from buttons import SetAlarmButton, SleepButton
-from clock import ClockLabel
-from weather import WeatherStatusLabel
+from PiAlarmClock.components.buttons import SetAlarmButton, SleepButton
+from PiAlarmClock.components.clock import ClockLabel
+from PiAlarmClock.components.weather import WeatherStatusLabel
 
 kivy.require("1.9.1")
 owm = pyowm.OWM('f8ad5034578b3193450b67823d91f5bf')

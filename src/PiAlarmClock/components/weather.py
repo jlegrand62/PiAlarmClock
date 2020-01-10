@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-from main import store
+from PiAlarmClock.main import store
 
 
 class WeatherStatButton(Button):

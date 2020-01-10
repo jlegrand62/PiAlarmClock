@@ -7,7 +7,7 @@ from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
-from PiAlarmClock.src.PiAlarmClock.main import owm, npr_paper, bbc_paper, wsj_paper
+from PiAlarmClock.main import owm, npr_paper, bbc_paper, wsj_paper
 
 
 #status labels for Settings page which update based on state of their corresponding checkbox
