@@ -1,4 +1,4 @@
-#!/home/jonathan/venc/alarmclock/bin/python
+#!/home/jonathan/venv/alarmclock/bin/python
 
 import sys
 import kivy
@@ -81,7 +81,7 @@ class ScreenHandler(ScreenManager):
 
 
 # main loop which runs the app and populates the UI
-class MezaApp(App):
+class PyAlarmClockApp(App):
 
     def build(self):
         if STORE.exists('weather_stat'):
@@ -110,4 +110,4 @@ class MezaApp(App):
 
 
 if __name__ == '__main__':
-    MezaApp().run()
+    PyAlarmClockApp().run()

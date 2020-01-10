@@ -12,9 +12,6 @@ about = {}
 with open(join(root_folder, "src", "PiAlarmClock", "__about__.py")) as fp:
     exec(fp.read(), about)
 
-# find packages
-pkgs = find_packages('src')
-
 setup_kwds = dict(
     name=about['__title__'],
     version=about['__version__'],
@@ -23,9 +20,8 @@ setup_kwds = dict(
     author_email=about['__email__'],
     url=about['__uri__'],
     # license=about['__license__'],
+    packages=find_packages(),
     zip_safe=False,
-    packages=pkgs,
-    package_dir={'': 'src'},
     python_requires='>=3.6',
     setup_requires=[
     ],
@@ -39,7 +35,7 @@ setup_kwds = dict(
     entry_points={
     },
     scripts=[
-        'src/PiAlarmClock/main.py'
+        'src/main.py'
     ],
     keywords='',
 
