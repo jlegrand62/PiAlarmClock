@@ -16,7 +16,7 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 
-from Meza.main import store
+from Meza.main import STORE
 
 
 class PopupDismissButton(Button):
@@ -35,7 +35,7 @@ class PopupDismissButton(Button):
             alarm_hour = int(button1.text)
             alarm_minute = int(button2.text)
             currentDay = time.strftime("%A")
-            store.put(currentDay, alarm_hour=alarm_hour, alarm_minute=alarm_minute)
+            STORE.put(currentDay, alarm_hour=alarm_hour, alarm_minute=alarm_minute)
 
         instance.dismiss()
 
@@ -108,9 +108,9 @@ class SetAlarmButton(Button):
         self.valign = 'middle'
         self.halign = 'center'
 
-        if store.exists(currentDay):
-            alarm_hour = store.get(currentDay)['alarm_hour']
-            alarm_minute = store.get(currentDay)['alarm_minute']
+        if STORE.exists(currentDay):
+            alarm_hour = STORE.get(currentDay)['alarm_hour']
+            alarm_minute = STORE.get(currentDay)['alarm_minute']
 
         # default state of alarm button before any alarms are set
         if alarm_hour == 0 and alarm_minute == 0:
@@ -142,21 +142,21 @@ class SleepButton(Button):
             os.system("echo 255 > /sys/class/backlight/rpi_backlight/brightness")
             global smart_sleep
             if smart_sleep == 1:
-                if store.exists('smart_sleep_count'):
-                    smart_sleep_count = store.get('smart_sleep_count')['count']
+                if STORE.exists('smart_sleep_count'):
+                    smart_sleep_count = STORE.get('smart_sleep_count')['count']
                 else:
                     smart_sleep_count = 0
 
                 if smart_sleep_count == 7:
                     smart_sleep_count = 0
-                    store.put('smart_sleep_count', count=0)
+                    STORE.put('smart_sleep_count', count=0)
                     smart_sleep = 0
-                    store.put('smart_sleep', status=0)
+                    STORE.put('smart_sleep', status=0)
 
                     average = 0
                     for i in range(1, 8):
                         day = 'Day{}'.format(i)
-                        temp = store.get(day)['total_time']
+                        temp = STORE.get(day)['total_time']
                         average = average + temp
 
                     average = average / 7
@@ -166,17 +166,17 @@ class SleepButton(Button):
                         average = average - 60
                         counter = counter + 1
 
-                    store.put('Monday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Tuesday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Wednesday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Thursday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Friday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Saturday', alarm_hour=counter, alarm_minute=average)
-                    store.put('Sunday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Monday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Tuesday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Wednesday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Thursday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Friday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Saturday', alarm_hour=counter, alarm_minute=average)
+                    STORE.put('Sunday', alarm_hour=counter, alarm_minute=average)
 
                 else:
                     smart_sleep_count = smart_sleep_count + 1
-                    store.put('smart_sleep_count', count=smart_sleep_count)
+                    STORE.put('smart_sleep_count', count=smart_sleep_count)
 
                     now = datetime.datetime.now()
                     wake_hour = int(now.hour)
@@ -188,7 +188,7 @@ class SleepButton(Button):
                         weekend = 1
                     else:
                         weekend = 0
-                    store.put(day, total_time=total_time, isWeekend=weekend)
+                    STORE.put(day, total_time=total_time, isWeekend=weekend)
 
             self.text = "Good Night"
 
@@ -214,8 +214,8 @@ class SmartSleepStatButton(Button):
     def updateSmartSleep(self):
         global smart_sleep
         if smart_sleep == 0:
-            store.put('smart_sleep', status=1)
+            STORE.put('smart_sleep', status=1)
             smart_sleep = 1
         else:
-            store.put('smart_sleep', status=0)
+            STORE.put('smart_sleep', status=0)
             smart_sleep = 0

@@ -2,7 +2,7 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-from Meza.main import store
+from main import store
 
 
 class NewsStatButton(Button):
