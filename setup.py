@@ -20,8 +20,8 @@ setup_kwds = dict(
     author_email=about['__email__'],
     url=about['__uri__'],
     # license=about['__license__'],
-    packages=find_packages('src'),  # include all packages under src
     package_dir={'':'src'},   # tell distutils packages are under src
+    packages=find_packages(),
     zip_safe=False,
     python_requires='>=3.6',
     setup_requires=[
