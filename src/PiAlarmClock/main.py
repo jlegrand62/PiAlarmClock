@@ -8,10 +8,6 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 import newspaper
 
-from PiAlarmClock.components.buttons import SetAlarmButton, SleepButton
-from PiAlarmClock.components.clock import ClockLabel
-from PiAlarmClock.components.weather import WeatherStatusLabel
-
 kivy.require("1.9.1")
 owm = pyowm.OWM('f8ad5034578b3193450b67823d91f5bf')
 STORE = JsonStore('config/settings.json')
@@ -81,6 +77,10 @@ class ScreenHandler(ScreenManager):
 class PyAlarmClockApp(App):
 
     def build(self):
+        from PiAlarmClock.components.buttons import SetAlarmButton, SleepButton
+        from PiAlarmClock.components.clock import ClockLabel
+        from PiAlarmClock.components.weather import WeatherStatusLabel
+
         if STORE.exists('weather_stat'):
             global WEATHER_STAT
             WEATHER_STAT = STORE.get('weather_stat')['status']
