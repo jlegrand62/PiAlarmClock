@@ -8,9 +8,13 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.storage.jsonstore import JsonStore
 import newspaper
 
+from os.path import dirname, abspath, join
+
+_ROOT = abspath(dirname(__file__))
+
 kivy.require("1.9.1")
 owm = pyowm.OWM('f8ad5034578b3193450b67823d91f5bf')
-STORE = JsonStore('config/settings.json')
+STORE = JsonStore(join(_ROOT, 'config', 'settings.json'))
 SMART_SLEEP = 0
 WEATHER_STAT = 0
 NEWS_STAT = 0
