@@ -14,7 +14,7 @@ from PiAlarmClock.components.weather import WeatherStatusLabel
 
 kivy.require("1.9.1")
 owm = pyowm.OWM('f8ad5034578b3193450b67823d91f5bf')
-STORE = JsonStore('settings.json')
+STORE = JsonStore('config/settings.json')
 SMART_SLEEP = 0
 WEATHER_STAT = 0
 NEWS_STAT = 0
