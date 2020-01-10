@@ -1,0 +1,178 @@
+#: kivy 1.9
+#: import ScreenManager kivy.uix.screenmanager.ScreenManager
+#: import Screen kivy.uix.screenmanager.ScreenManager
+
+ScreenHandler:
+    ClockScreen:
+    SettingsScreen:
+
+<ScreenHandler>:
+    
+    
+<WeatherStatusLabel>:
+    font_size: 20
+
+<SmartSleepStatusLabel>:
+    font_size: 20
+
+<NewsStatusLabel>:
+    font_size: 20
+
+<ClockScreen>:
+    name: "clock"
+
+    canvas:
+        Color:
+            rgb: 0.0390625, 0.09375, 0.17578125
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "images/settings_background.png"
+
+    FloatLayout:
+            
+        Button:
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.current = "settings"
+            pos_hint: {"right":1, "top":1}
+            Image:
+                source: "images/settingicon.png"
+                center_x: self.parent.center_x + 25
+                center_y: self.parent.center_y 
+                
+
+        Button:
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
+            on_release: app.stop()
+            pos_hint: {"left":1, "top":1}
+            Image:
+                source: "images/powericon.png"
+                center_x: self.parent.center_x - 25
+                center_y: self.parent.center_y 
+
+        SetAlarmButton:
+            size_hint: 0.25, 0.20
+            pos: root.width * 0.365, root.height*.73
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
+
+        ClockLabel:
+            size_hint: 0.28, 0.19
+            pos: root.width*0.35,root.height*0.45
+
+        SleepButton:
+            size_hint: 0.22, 0.17
+            pos: root.width * 0.21, root.height*0.12
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
+
+        AlarmStopButton:
+            size_hint: 0.22, 0.17
+            pos: root.width * 0.55, root.height*0.12
+            font_size: 25
+            background_normal: "images/button.png"
+            background_down: "images/button_2.png"
+
+<SpecialFloatLayout>
+
+<WeatherCheckBox>
+    
+<SmartSleepCheckBox>
+
+<NewsCheckBox>
+
+<SettingsScreen>:
+    name: "settings"
+
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "images/settings_background.png"
+    
+    SpecialFloatLayout:
+        Button:
+            background_color: 0, 0, 0, 0
+            size_hint: 0.2, 0.23
+            on_release:
+                root.manager.transition.direction = 'right'
+                root.manager.current = "clock"
+            pos_hint: {"left":1, "top":1}
+            Image:
+                source: "images/clockicon.png"
+                center_x: self.parent.center_x - 25
+                center_y: self.parent.center_y 
+
+        WeatherStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.22, root.height * 0.14
+            id: wl
+
+        SmartSleepStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.42, root.height * 0.14
+
+        NewsStatusLabel:
+            size_hint: 0.1, 0.1
+            pos: root.width * 0.62, root.height * 0.14
+
+        WeatherStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.2, root.height * 0.3
+            on_press: self.updateWeather()
+            background_normal: "images/settings_1.png"
+            background_down: "images/seetings_2.png"
+
+        SmartSleepStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.3
+            on_press: self.updateSmartSleep()
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
+
+        NewsStatButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.6, root.height * 0.3
+            on_press: self.updateNews()
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
+
+        NewsArticleNum:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.8
+            on_press: self.updateArticleNum()
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
+            
+
+        NewsArticleNumLabel:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.53, root.height * 0.8
+
+        NewsSourceButton:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.4, root.height * 0.6
+            on_press: self.updateNewsSource()
+            background_normal: "images/settings_1.png"
+            background_down: "images/settings_2.png"
+
+        NewsSourceLabel:
+            size_hint: 0.15, 0.15
+            pos: root.width * 0.53, root.height * 0.6
+        
+
+
+           
+		
+
+<ClockLabel>:
+
+<SetAlarmButton>:
+    font_size: 22
+
+<SleepButton>:
+    font_size: 25
