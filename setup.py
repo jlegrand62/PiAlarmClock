@@ -35,7 +35,7 @@ setup_kwds = dict(
     entry_points={
     },
     scripts=[
-        'src/main.py'
+        'main.py'
     ],
     keywords='',
     test_suite='nose.collector',
