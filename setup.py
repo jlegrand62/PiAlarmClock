@@ -36,7 +36,7 @@ setup_kwds = dict(
     entry_points={
     },
     scripts=[
-        'main.py'
+        'PiAlarmClock/src/PiAlarmClock/main.py'
     ],
     keywords='',
     test_suite='nose.collector',
