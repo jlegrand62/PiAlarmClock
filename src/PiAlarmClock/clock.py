@@ -7,7 +7,7 @@ from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 
-from Meza.main import owm, npr_paper, bbc_paper, wsj_paper
+from PiAlarmClock.src.PiAlarmClock.main import owm, npr_paper, bbc_paper, wsj_paper
 
 
 #status labels for Settings page which update based on state of their corresponding checkbox
@@ -168,7 +168,7 @@ class ClockLabel(Label):
         # sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         # global alarm_pid
         # alarm_pid = os.getpgid(sub.pid)
-        cmd = "python /home/jonathan/Projects/alarmclock/Meza/alarm.py"
+        cmd = "python /home/jonathan/Projects/alarmclock/PiAlarmClock/alarm.py"
         sub = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         global alarm_pid
         alarm_pid = os.getpgid(sub.pid)
